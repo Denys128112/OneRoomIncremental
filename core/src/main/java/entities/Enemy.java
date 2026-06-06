@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 public class Enemy extends Entity {
 
     public Enemy(float x, float y) {
-        super(x, y, 24, 24, 0f, Color.RED);
+        super(x, y, 16, 16, 0f, Color.RED);
     }
 
     @Override

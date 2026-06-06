@@ -1,4 +1,4 @@
-package io.github.some_example_name;
+package Services;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -37,7 +37,6 @@ public class Map {
                             for (int dy = -1; dy <= 1; dy++) {
                                 int clearX = diggerX + dx;
                                 int clearY = diggerY + dy;
-                                // Перевірка меж
                                 if (clearX >= 0 && clearX < SIZE && clearY >= 0 && clearY < SIZE) {
                                     map[clearX][clearY] = 0;
                                 }
@@ -97,8 +96,6 @@ public class Map {
                     }
                 }
             }
-
-            // Зберігаємо зміни перед наступним проходом
             for (int x = 0; x < SIZE; x++) {
                 for (int y = 0; y < SIZE; y++) {
                     map[x][y] = tempMap[x][y];

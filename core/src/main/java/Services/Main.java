@@ -1,19 +1,18 @@
-package io.github.some_example_name;
+package Services;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import java.util.ArrayList;
+import java.util.List;
+
 import entities.Enemy;
 import entities.Player;
 import entities.Projectile;
@@ -26,28 +25,25 @@ public class Main extends ApplicationAdapter {
 
     private ShapeRenderer shapeRenderer;
     private Player player;
-    private Enemy testEnemy;
     private Vector3 mousePos = new Vector3();
     private ArrayList<Projectile> projectiles;
-
+    private EnemyGenerator enemyGenerator;
+    private List<Enemy> enemies;
     @Override
     public void create() {
         map = new TmxMapLoader().load("map.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
         Map.createVisualMap(map);
+        enemyGenerator=new EnemyGenerator();
+        enemies=enemyGenerator.enemyList;
+        enemyGenerator.generate(Map.map,1);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.zoom = 0.4F;
         camera.update();
-
-
-
-
-
         shapeRenderer = new ShapeRenderer();
         player = new Player(400, 300);
-        testEnemy = new Enemy(200, 200);
         projectiles = new ArrayList<>();
-
 
 
     }
@@ -56,7 +52,6 @@ public class Main extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 
 
         float deltaTime = Gdx.graphics.getDeltaTime();
@@ -72,48 +67,52 @@ public class Main extends ApplicationAdapter {
             float startY = player.getY() + 16;
             projectiles.add(new Projectile(startX, startY, player.getRotation()));
         }
-
         player.update(deltaTime);
-        testEnemy.update(deltaTime);
-        for (Projectile p : projectiles) {
+        java.util.Iterator<Projectile> iter = projectiles.iterator();
+        while (iter.hasNext()) {
+            Projectile p = iter.next();
             p.update(deltaTime);
+            if (CollisionChecker.isCollisionWithWall(p)) {
+                iter.remove();
+                System.out.println("collision");
+            }else {
+                Enemy e = checkWithEnemy(p);
+                if (e != null) {
+                    enemies.remove(e);
+                    iter.remove();
+                }
+            }
         }
-
-
-
         camera.position.set(player.getX() + 16, player.getY() + 16, 0);
-
-
-
-
-
         camera.update();
         renderer.setView(camera);
         renderer.render();
 
 
-
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        testEnemy.render(shapeRenderer);
         for (Projectile p : projectiles) {
             p.render(shapeRenderer);
         }
         player.render(shapeRenderer);
-
+        enemyGenerator.render(shapeRenderer);
         shapeRenderer.end();
+    }
+
+    private Enemy checkWithEnemy(Projectile p) {
+        for(Enemy e:enemies) {
+            if (CollisionChecker.isCollision(p, e)) {
+                return e;
+            }
+        }
+        System.out.println(p);
+        return null;
     }
 
     @Override
     public void dispose() {
         map.dispose();
         renderer.dispose();
-
-
-
         shapeRenderer.dispose();
-
-
     }
 }
