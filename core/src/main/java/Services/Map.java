@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.MathUtils;
 public class Map {
     public static final int SIZE = 63;
 
-    static int[][] map = new int[SIZE][SIZE];
+    public static int[][] map = new int[SIZE][SIZE];
 
     public static void generateMap() {
         if (MathUtils.randomBoolean(0.5f))
