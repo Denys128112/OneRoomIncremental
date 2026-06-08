@@ -69,7 +69,7 @@ public class GameScreen extends BaseScreen {
 
         room.add(actionButton("ЗАВЕРШИТИ ХВИЛЮ / ПОКРАЩЕННЯ", () -> {
             state.nextWave();
-            game.showUpgrades();
+            game.showSkillTree();
         })).width(530f).height(76f).padTop(22f).row();
 
         Table navigation = new Table();

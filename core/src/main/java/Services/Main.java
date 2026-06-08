@@ -8,6 +8,7 @@ import Services.ui.UiSkinFactory;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import SkillTree.SkillTreeScreen;
 
 /**
  * Screen-oriented application root.
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class Main extends Game {
     private Skin skin;
     private GameStateStub gameState;
+    private SkillTreeScreen skillTreeScreen;
 
     @Override
     public void create() {
@@ -38,6 +40,10 @@ public class Main extends Game {
         switchTo(new UpgradeScreen(this));
     }
 
+    public void showSkillTree() {
+        if (skillTreeScreen == null) skillTreeScreen = new SkillTreeScreen(this);
+        switchTo(skillTreeScreen);
+    }
     public Skin getSkin() {
         return skin;
     }
@@ -49,7 +55,7 @@ public class Main extends Game {
     private void switchTo(Screen next) {
         Screen previous = getScreen();
         setScreen(next);
-        if (previous != null) {
+        if (previous != null && previous != skillTreeScreen) {
             previous.dispose();
         }
     }
