@@ -10,6 +10,7 @@ public class Player extends Entity {
     public Player(float x, float y) {
         super(x, y, 16, 16, 200f, Color.BLUE);
     }
+
     @Override
     public void update(float deltaTime) {
         float currentSpeed = speed;
@@ -48,4 +49,6 @@ public class Player extends Entity {
         float angleRad = MathUtils.atan2(targetY - centerY, targetX - centerX);
         this.rotation = angleRad * MathUtils.radiansToDegrees;
     }
+
+    public void takeDamage(float amount) {}
 }

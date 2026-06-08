@@ -5,17 +5,19 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.MathUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
 import entities.Enemy;
+import entities.Player;
 
 public class EnemyGenerator {
     EnemyCreator creator= new EnemyCreator();
     List<Enemy> enemyList= new ArrayList<>();
     private static final int TILE_SIZE = 16;
     private static final int WALL_THICKNESS = 2;
-    public void generate(int[][] map, int wave) {
+    public void generate(int[][] map, int wave, Player player) {
         int targetEnemyCount = (int) (10 + 0.565f * Math.pow((wave - 1), 1.3));
 
         Array<GridPoint2> freeTiles = new Array<>();
@@ -34,7 +36,15 @@ public class EnemyGenerator {
             GridPoint2 spawnPoint = freeTiles.get(i);
             float spawnX = spawnPoint.x * TILE_SIZE;
             float spawnY = spawnPoint.y * TILE_SIZE;
-            enemyList.add(creator.createEnemy(spawnX, spawnY, MathUtils.random(1, 10)));
+            enemyList.add(creator.createEnemy(spawnX, spawnY, MathUtils.random(1, 10), player));
+        }
+    }
+    public void update(float delta) {
+        Iterator<Enemy> it = enemyList.iterator();
+        while (it.hasNext()) {
+            Enemy e = it.next();
+            e.update(delta);
+            if (e.dead) it.remove();
         }
     }
     public void render(ShapeRenderer shapeRenderer) {
