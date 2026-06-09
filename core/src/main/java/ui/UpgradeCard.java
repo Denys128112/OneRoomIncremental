@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import java.math.BigDecimal;
 
 /** One purchasable upgrade card used inside UpgradeScreen's vertical ScrollPane. */
@@ -33,17 +34,21 @@ public class UpgradeCard extends Table {
         Table text = new Table();
         text.left();
         Label name = new Label(upgrade.getName(), skin, "heading");
-        name.setFontScale(0.76f);
-        text.add(name).left().row();
+        name.setFontScale(0.68f);
+        name.setWrap(true);
+        name.setAlignment(Align.left);
+        text.add(name).width(530f).left().row();
         Label description = new Label(upgrade.getDescription(), skin, "small");
         description.setWrap(true);
-        text.add(description).width(570f).left().padTop(7f).row();
+        text.add(description).width(530f).left().padTop(7f).row();
         levelLabel = new Label("", skin);
         text.add(levelLabel).left().padTop(10f);
         add(text).growX().left();
 
         buyButton = new TextButton("", skin);
         buyButton.getLabel().setWrap(true);
+        buyButton.getLabel().setAlignment(Align.center);
+        buyButton.getLabel().setFontScale(0.78f);
         buyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

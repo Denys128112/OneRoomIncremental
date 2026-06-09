@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 /** Between-wave shop with five branch filters and a vertical list of upgrade cards. */
@@ -33,7 +34,9 @@ public class UpgradeScreen extends BaseScreen {
         Table header = new Table();
         header.setBackground(game.getSkin().getDrawable("panel-strong"));
         header.pad(18f);
-        header.add(new Label("АРСЕНАЛ МІЖ ХВИЛЯМИ", game.getSkin(), "heading")).left().expandX();
+        Label headerTitle = new Label("АРСЕНАЛ МІЖ ХВИЛЯМИ", game.getSkin(), "heading");
+        headerTitle.setWrap(true);
+        header.add(headerTitle).width(520f).left().expandX();
         header.add(new Image(game.getSkin().getDrawable("credits-icon"))).size(42f).padRight(12f);
         creditsLabel = new Label("", game.getSkin(), "gold");
         header.add(creditsLabel).right().padRight(24f);
@@ -68,7 +71,7 @@ public class UpgradeScreen extends BaseScreen {
             branches.add(branchButton).width(260f).height(76f).padBottom(12f).row();
         }
         branches.add().growY();
-        Label prestige = new Label("---" + game.getGameState().getPrestige(), game.getSkin(), "small");
+        Label prestige = new Label("ПРЕСТИЖ " + game.getGameState().getPrestige(), game.getSkin(), "small");
         prestige.setColor(UiSkinFactory.GOLD);
         branches.add(prestige).padTop(18f);
         return branches;
@@ -82,7 +85,9 @@ public class UpgradeScreen extends BaseScreen {
         Image icon = new Image(game.getSkin().getDrawable(selectedBranch.icon));
         icon.setColor(UiSkinFactory.CYAN);
         title.add(icon).size(54f).padRight(14f);
-        title.add(new Label(selectedBranch.title, game.getSkin(), "heading")).left();
+        Label branchTitle = new Label(selectedBranch.title, game.getSkin(), "heading");
+        branchTitle.setWrap(true);
+        title.add(branchTitle).width(650f).left();
         cardList.add(title).left().padBottom(16f).row();
 
         for (UpgradeStub upgrade : game.getGameState().getUpgrades()) {
@@ -92,7 +97,7 @@ public class UpgradeScreen extends BaseScreen {
             UpgradeCard card = new UpgradeCard(
                 game.getSkin(), game.getGameState(), upgrade, this::refreshPrices);
             visibleCards.add(card);
-            cardList.add(card).growX().height(172f).padBottom(14f).row();
+            cardList.add(card).growX().height(205f).padBottom(14f).row();
         }
         cardList.add().growY();
         refreshPrices();
@@ -107,6 +112,9 @@ public class UpgradeScreen extends BaseScreen {
 
     private TextButton button(String text, Runnable action) {
         TextButton button = new TextButton(text, game.getSkin());
+        button.getLabel().setAlignment(Align.center);
+        button.getLabel().setWrap(true);
+        button.getLabel().setFontScale(0.72f);
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 
 /** Start menu with the requested start, settings and exit actions. */
 public class MainMenuScreen extends BaseScreen {
@@ -19,16 +21,33 @@ public class MainMenuScreen extends BaseScreen {
     }
 
     private void build() {
+        Stack screen = new Stack();
+        screen.setFillParent(true);
+        stage.addActor(screen);
+
+        Image background = new Image(game.getSkin().getDrawable("main-menu-background"));
+        background.setScaling(Scaling.fill);
+        screen.add(background);
+
+        Table dimLayer = new Table();
+        dimLayer.setBackground(game.getSkin().getDrawable("dark"));
+        dimLayer.setColor(1f, 1f, 1f, 0.62f);
+        screen.add(dimLayer);
+
         Table root = new Table();
-        root.setFillParent(true);
-        root.setBackground(game.getSkin().getDrawable("dark"));
-        stage.addActor(root);
+        screen.add(root);
 
         Stack logo = new Stack();
         logo.add(new Image(game.getSkin().getDrawable("logo-frame")));
         Table titleLayer = new Table();
-        titleLayer.add(new Label("ОДИН В КІМНАТІ", game.getSkin(), "title")).row();
-        titleLayer.add(new Label("ІНКРЕМЕНТАЛЬНА ГРА", game.getSkin(), "heading")).padTop(10f);
+        Label title = new Label("ОДИН В КІМНАТІ", game.getSkin(), "title");
+        title.setAlignment(Align.center);
+        title.setWrap(true);
+        Label subtitle = new Label("ІНКРЕМЕНТАЛЬНА ГРА", game.getSkin(), "heading");
+        subtitle.setAlignment(Align.center);
+        subtitle.setWrap(true);
+        titleLayer.add(title).width(860f).row();
+        titleLayer.add(subtitle).width(860f).padTop(10f);
         logo.add(titleLayer);
         root.add(logo).width(970f).height(320f).padBottom(24f).row();
 
@@ -42,6 +61,9 @@ public class MainMenuScreen extends BaseScreen {
 
     private void addButton(Table root, String text, Runnable action) {
         TextButton button = new TextButton(text, game.getSkin());
+        button.getLabel().setAlignment(Align.center);
+        button.getLabel().setWrap(true);
+        button.getLabel().setFontScale(0.9f);
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
