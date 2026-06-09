@@ -14,7 +14,7 @@ import entities.Player;
 
 public class EnemyGenerator {
     EnemyCreator creator= new EnemyCreator();
-    List<Enemy> enemyList= new ArrayList<>();
+    public List<Enemy> enemyList= new ArrayList<>();
     private static final int TILE_SIZE = 16;
     private static final int WALL_THICKNESS = 2;
     public void generate(int[][] map, int wave, Player player) {
@@ -37,14 +37,6 @@ public class EnemyGenerator {
             float spawnX = spawnPoint.x * TILE_SIZE;
             float spawnY = spawnPoint.y * TILE_SIZE;
             enemyList.add(creator.createEnemy(spawnX, spawnY, MathUtils.random(1, 10), player));
-        }
-    }
-    public void update(float delta) {
-        Iterator<Enemy> it = enemyList.iterator();
-        while (it.hasNext()) {
-            Enemy e = it.next();
-            e.update(delta);
-            if (e.dead) it.remove();
         }
     }
     public void render(ShapeRenderer shapeRenderer) {

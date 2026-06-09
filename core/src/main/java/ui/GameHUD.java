@@ -1,7 +1,7 @@
-package Services.ui;
+package ui;
 
-import Services.stub.GameStateStub;
-import Services.stub.LargeNumberFormatter;
+import stub.GameStateStub;
+import stub.LargeNumberFormatter;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;

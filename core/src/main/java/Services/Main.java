@@ -1,10 +1,10 @@
 package Services;
 
-import Services.screens.GameScreen;
-import Services.screens.MainMenuScreen;
-import Services.screens.UpgradeScreen;
-import Services.stub.GameStateStub;
-import Services.ui.UiSkinFactory;
+import screens.GameScreen;
+import screens.MainMenuScreen;
+import screens.UpgradeScreen;
+import stub.GameStateStub;
+import ui.UiSkinFactory;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;

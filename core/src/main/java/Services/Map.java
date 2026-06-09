@@ -6,6 +6,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.MathUtils;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Map {
     public static final int SIZE = 63;
 
@@ -102,7 +105,37 @@ public class Map {
                 }
             }
         }
+        fillWithWalls();
     }
+    public static void fillWithWalls() {
+            boolean[][] reachable = new boolean[SIZE][SIZE];
+            Queue<int[]> queue = new LinkedList<>();
+            queue.add(new int[]{1, 1});
+            reachable[1][1] = true;
+
+            while (!queue.isEmpty()) {
+                int[] cell = queue.poll();
+                int cx = cell[0], cy = cell[1];
+
+                int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+                for (int[] d : dirs) {
+                    int nx = cx + d[0], ny = cy + d[1];
+                    if (nx >= 0 && nx < SIZE && ny >= 0 && ny < SIZE
+                        && !reachable[nx][ny] && map[nx][ny] == 0) {
+                        reachable[nx][ny] = true;
+                        queue.add(new int[]{nx, ny});
+                    }
+                }
+            }
+            for (int x = 0; x < SIZE; x++) {
+                for (int y = 0; y < SIZE; y++) {
+                    if (map[x][y] == 0 && !reachable[x][y]) {
+                        map[x][y] = 1;
+                    }
+                }
+            }
+        }
+
 
     public static void resolveToRender() {
         int[][] newMap = new int[SIZE][SIZE];
@@ -132,12 +165,6 @@ public class Map {
     public static void createVisualMap(TiledMap tiledMap) {
         generateMap();
         resolveToRender();
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                System.out.print(map[x][y] + " ");
-            }
-            System.out.println();
-        }
         TiledMapTileSet tileset = tiledMap.getTileSets().getTileSet("tileset2");
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get("walls");
         TiledMapTile roofTile = tileset.getTile(200);

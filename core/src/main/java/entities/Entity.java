@@ -10,7 +10,6 @@ public abstract class Entity {
     protected float speed;
     protected Color color;
     public Rectangle bounds;
-
     protected float rotation = 0;
 
     public Entity(float x, float y, float width, float height, float speed, Color color) {
@@ -21,6 +20,7 @@ public abstract class Entity {
         this.speed = speed;
         this.color = color;
         this.bounds = new Rectangle(x, y, width, height);
+
     }
 
     public abstract void update(float deltaTime);
@@ -32,6 +32,14 @@ public abstract class Entity {
 
     public float getX() { return x; }
     public float getY() { return y; }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
 
     public float getRotation() {
         return rotation;

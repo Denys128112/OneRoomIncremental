@@ -1,10 +1,10 @@
-package Services.screens;
+package screens;
 
 import Services.Main;
-import Services.stub.LargeNumberFormatter;
-import Services.stub.UpgradeStub;
-import Services.ui.UpgradeCard;
-import Services.ui.UiSkinFactory;
+import stub.LargeNumberFormatter;
+import stub.UpgradeStub;
+import ui.UpgradeCard;
+import ui.UiSkinFactory;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;

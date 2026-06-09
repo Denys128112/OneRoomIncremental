@@ -1,6 +1,6 @@
-package Services.ui;
+package ui;
 
-import Services.stub.GameStateStub;
+import stub.GameStateStub;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;

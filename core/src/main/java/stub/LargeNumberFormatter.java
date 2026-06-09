@@ -1,4 +1,4 @@
-package Services.stub;
+package stub;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

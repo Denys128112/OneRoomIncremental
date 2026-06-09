@@ -1,4 +1,4 @@
-package Services.ui;
+package ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;

@@ -1,4 +1,4 @@
-package Services.screens;
+package screens;
 
 import Services.Main;
 import com.badlogic.gdx.Gdx;

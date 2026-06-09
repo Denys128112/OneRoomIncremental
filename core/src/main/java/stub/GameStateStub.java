@@ -1,4 +1,4 @@
-package Services.stub;
+package stub;
 
 import com.badlogic.gdx.utils.Array;
 import java.math.BigDecimal;
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class GameStateStub {
     private final Array<UpgradeStub> upgrades = new Array<>();
     private BigDecimal credits = new BigDecimal("1250");
-    private int healthQuarters = 18;
+    private static int healthQuarters = 18;
     private int maxHealthQuarters = 24;
     private int experience = 35;
     private int experienceToNextLevel = 100;
@@ -55,7 +55,7 @@ public class GameStateStub {
         return true;
     }
 
-    public void damageOneQuarter() {
+    public static void damageOneQuarter() {
         healthQuarters = Math.max(0, healthQuarters - 1);
     }
 

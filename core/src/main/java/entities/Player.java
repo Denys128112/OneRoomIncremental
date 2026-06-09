@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import Services.CollisionChecker;
+import stub.GameStateStub;
+
 public class Player extends Entity {
 
     public Player(float x, float y) {
@@ -50,5 +52,10 @@ public class Player extends Entity {
         this.rotation = angleRad * MathUtils.radiansToDegrees;
     }
 
-    public void takeDamage(float amount) {}
+    public void takeDamage(int damage) {
+        switch (damage){
+            case 1:
+            GameStateStub.damageOneQuarter();
+        }
+    }
 }
