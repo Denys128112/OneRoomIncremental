@@ -42,16 +42,17 @@ public final class UiSkinFactory {
 
     public static Skin create() {
         Skin skin = new Skin();
-        BitmapFont small = font(18);
-        BitmapFont body = font(24);
-        BitmapFont heading = font(34);
-        BitmapFont title = font(64);
+        BitmapFont small = font("ui/fonts/RussoOne-Regular.ttf", 17);
+        BitmapFont body = font("ui/fonts/RussoOne-Regular.ttf", 22);
+        BitmapFont heading = font("ui/fonts/Unbounded.ttf", 28);
+        BitmapFont title = font("ui/fonts/Unbounded.ttf", 52);
         skin.add("small-font", small);
         skin.add("body-font", body);
         skin.add("heading-font", heading);
         skin.add("title-font", title);
 
         addTextureDrawable(skin, "logo-frame", ROOT + "logo/frame.png");
+        addTextureDrawable(skin, "main-menu-background", "ui/backgrounds/main-menu.png");
         addTextureDrawable(skin, "general-icon", ROOT + "icons/general.png");
         addTextureDrawable(skin, "warrior-icon", ROOT + "icons/warrior.png");
         addTextureDrawable(skin, "ranger-icon", ROOT + "icons/ranger.png");
@@ -118,9 +119,9 @@ public final class UiSkinFactory {
         return skin;
     }
 
-    private static BitmapFont font(int size) {
+    private static BitmapFont font(String path, int size) {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-            Gdx.files.internal("ui/fonts/NotoSans-Regular.ttf"));
+            Gdx.files.internal(path));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
             new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;

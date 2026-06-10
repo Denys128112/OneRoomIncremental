@@ -64,13 +64,18 @@ Assets copied from the provided archive live under `assets/ui/craftpix`:
 - `interface/panels.png`
 - `bars/bars.png`
 - `palette.png`
+- `../backgrounds/main-menu.png` - generated 16:9 Sci-Fi city background for the start menu.
 
 Exact loading paths are centralized in `UiSkinFactory`. Generated Pixmap drawables are
 used for XP fills, heart quadrants, panel backgrounds and locked-state colors.
 
-The CraftPix font contains Latin glyphs only. Ukrainian UI text uses
-`assets/ui/fonts/NotoSans-Regular.ttf`; its SIL Open Font License is stored in
-`assets/ui/fonts/OFL-Noto.txt`.
+The CraftPix font contains Latin glyphs only. Ukrainian UI text uses:
+
+- `assets/ui/fonts/Unbounded.ttf` for titles and section headings;
+- `assets/ui/fonts/RussoOne-Regular.ttf` for buttons, HUD and body text.
+
+Both fonts use the SIL Open Font License. Their license files are stored beside
+the font files.
 
 ## Dependencies and launch
 
