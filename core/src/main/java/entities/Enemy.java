@@ -27,6 +27,12 @@ public class Enemy extends Entity {
     @Override
     public void update(float deltaTime) {
         if (player == null) return;
+        if (isDead()) {
+            updateAnimation(deltaTime, 0f, 0f);
+            return;
+        }
+        float previousX = x;
+        float previousY = y;
         if (pathNeedsRecalculation()) {
             int startX = (int) (this.x / TILE_SIZE);
             int startY = (int) (this.y / TILE_SIZE);
@@ -49,6 +55,7 @@ public class Enemy extends Entity {
         }
 
         bounds.setPosition(x, y);
+        updateAnimation(deltaTime, x - previousX, y - previousY);
     }
 
     private void moveTowards(float targetX, float targetY, float deltaTime) {
@@ -86,7 +93,21 @@ public class Enemy extends Entity {
         return false;
     }
     public void takeDamage(int damage) {
+        if (isDead()) return;
         hp -= damage;
+        if (hp <= 0) {
+            playDeathAnimation();
+        } else {
+            playHurtAnimation();
+        }
     }
     public int getHp() { return hp; }
+
+    public boolean isDead() {
+        return hp <= 0;
+    }
+
+    public boolean isReadyForRemoval() {
+        return isDead() && isAnimationFinished();
+    }
 }

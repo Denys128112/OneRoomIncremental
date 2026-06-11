@@ -3,6 +3,7 @@ package Services;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Disposable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import entities.Enemy;
 import entities.Player;
 
-public class EnemyGenerator {
+public class EnemyGenerator implements Disposable {
     EnemyCreator creator= new EnemyCreator();
     public List<Enemy> enemyList= new ArrayList<>();
     private static final int TILE_SIZE = 16;
@@ -42,5 +43,10 @@ public class EnemyGenerator {
     public void render(ShapeRenderer shapeRenderer) {
         for (Enemy e:enemyList)
             e.render(shapeRenderer);
+    }
+
+    @Override
+    public void dispose() {
+        creator.dispose();
     }
 }
