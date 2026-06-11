@@ -10,6 +10,10 @@ import entities.animation.SpriteSheetLayout;
 import stub.GameStateStub;
 
 public class Player extends Entity {
+    private float stunTimer;
+    private float poisonTimer;
+    private float poisonTickTimer;
+    private int poisonDamage;
 
     public Player(float x, float y) {
         super(x, y, 16, 16, 200f, Color.BLUE);
@@ -25,8 +29,13 @@ public class Player extends Entity {
 
     @Override
     public void update(float deltaTime) {
+        updateStatusEffects(deltaTime);
         float startX = x;
         float startY = y;
+        if (stunTimer > 0f) {
+            updateAnimation(deltaTime, 0f, 0f);
+            return;
+        }
         float currentSpeed = speed;
         if (Gdx.input.isKeyPressed(Keys.SPACE)) {
             currentSpeed = speed * 3f;
@@ -71,9 +80,29 @@ public class Player extends Entity {
 
     public void takeDamage(int damage) {
         playHurtAnimation();
-        switch (damage){
-            case 1:
+        for (int i = 0; i < damage; i++) {
             GameStateStub.damageOneQuarter();
         }
+    }
+
+    public void applyStun(float duration) {
+        stunTimer = Math.max(stunTimer, duration);
+    }
+
+    public void applyPoison(float duration, int damagePerTick) {
+        poisonTimer = Math.max(poisonTimer, duration);
+        poisonDamage = Math.max(poisonDamage, damagePerTick);
+    }
+
+    private void updateStatusEffects(float deltaTime) {
+        stunTimer = Math.max(0f, stunTimer - deltaTime);
+        if (poisonTimer <= 0f) return;
+        poisonTimer -= deltaTime;
+        poisonTickTimer -= deltaTime;
+        if (poisonTickTimer <= 0f) {
+            takeDamage(poisonDamage);
+            poisonTickTimer = 1f;
+        }
+        if (poisonTimer <= 0f) poisonDamage = 0;
     }
 }

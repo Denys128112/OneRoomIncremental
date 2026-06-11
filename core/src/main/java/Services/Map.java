@@ -17,7 +17,8 @@ public class Map {
     public static void generateMap() {
         if (MathUtils.randomBoolean(0.5f))
             digers();
-        blocks();
+        else
+            blocks();
     }
 
     private static void digers() {
@@ -183,6 +184,7 @@ public class Map {
                 }
                 cell.setFlipHorizontally(false);
                 cell.setFlipVertically(false);
+                cell.setRotation(0);
                 int tileId = map[x][y];
                 switch (tileId) {
                     case 0:

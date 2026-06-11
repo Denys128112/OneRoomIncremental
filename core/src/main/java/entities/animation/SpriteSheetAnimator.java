@@ -117,6 +117,12 @@ public final class SpriteSheetAnimator implements Disposable {
         return finished;
     }
 
+    public void reset() {
+        state = AnimationState.IDLE;
+        stateTime = 0f;
+        finished = false;
+    }
+
     public void draw(Batch batch, float entityX, float entityY, float entityWidth) {
         int row = rowFor(direction);
         boolean mirror = direction == Direction.RIGHT && layout.rightRow < 0;

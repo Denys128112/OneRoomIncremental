@@ -16,7 +16,7 @@ public class GameStateStub {
     private int maxHealthQuarters = 24;
     private int experience = 35;
     private int experienceToNextLevel = 100;
-    private int wave = 1;
+    public static int wave = 1;
     private float waveSeconds;
     private boolean soundEnabled = true;
     private int prestige;

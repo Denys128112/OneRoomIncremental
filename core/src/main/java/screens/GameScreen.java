@@ -1,9 +1,8 @@
 package screens;
 
+import Services.GameManager;
 import Services.Main;
-import stub.GameStateStub;
-import ui.GameHUD;
-
+import Services.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,57 +13,47 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
+import stub.GameStateStub;
+import ui.GameHUD;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import entities.Enemy;
-import entities.Player;
-import entities.Projectile;
-
-import Services.Map;
-import Services.CollisionChecker;
-import Services.EnemyGenerator;
-
-/**
- * Combat screen інтегрований з реальним ігровим рендерером.
- * HUD залишається окремим актором поверх ігрового світу.
- */
 public class GameScreen extends BaseScreen {
+    private static final float TRANSITION_DURATION = 1f;
+
+    private enum ScreenState {
+        PLAYING,
+        FADING_OUT,
+        FADING_IN
+    }
+
     private final GameStateStub state;
     private final GameHUD hud;
+    private final Vector3 mousePos = new Vector3();
+    private final TiledMap map;
+    private final OrthogonalTiledMapRenderer renderer;
+    private final OrthographicCamera camera;
+    private final ShapeRenderer shapeRenderer;
+    private final SpriteBatch spriteBatch;
+    private final GameManager gameManager;
+
     private float hudRefresh;
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
-    private OrthographicCamera camera;
-    private ShapeRenderer shapeRenderer;
-    private SpriteBatch spriteBatch;
-    private Player player;
-    private Vector3 mousePos = new Vector3();
-    private ArrayList<Projectile> projectiles;
-    private EnemyGenerator enemyGenerator;
-    private List<Enemy> enemies;
+    private float transitionTimer;
+    private ScreenState currentState = ScreenState.PLAYING;
 
     public GameScreen(Main game) {
         super(game);
-        this.state = game.getGameState();
+        state = game.getGameState();
         map = new TmxMapLoader().load("map.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
         Map.createVisualMap(map);
-        player = new Player(400, 300);
-        resolvePlayerCoordinates();
-        enemyGenerator = new EnemyGenerator();
-        enemies = enemyGenerator.enemyList;
-        enemyGenerator.generate(Map.map, 1,player);
+        gameManager = new GameManager(map, state);
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.zoom = 1F;
+        camera.zoom = 0.45f;
         camera.update();
+
         shapeRenderer = new ShapeRenderer();
         spriteBatch = new SpriteBatch();
-        projectiles = new ArrayList<>();
-
         hud = new GameHUD(game.getSkin(), state);
         stage.addActor(hud);
     }
@@ -72,116 +61,106 @@ public class GameScreen extends BaseScreen {
     @Override
     public void render(float delta) {
         state.update(delta);
+        updateHud(delta);
+        updateAimAndInput();
+
+        if (currentState == ScreenState.PLAYING) {
+            gameManager.update(delta);
+            if (gameManager.isWaveCleared) {
+                currentState = ScreenState.FADING_OUT;
+                transitionTimer = 0f;
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            game.showSkillTree();
+        }
+
+        drawWorld();
+        updateAndDrawTransition(delta);
+        stage.act(delta);
+        stage.draw();
+    }
+
+    private void updateHud(float delta) {
         hudRefresh += delta;
         if (hudRefresh >= 0.1f) {
             hud.refresh();
             hudRefresh = 0f;
         }
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+
+    private void updateAimAndInput() {
         mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
-        player.lookAt(mousePos.x, mousePos.y);
+        gameManager.player.lookAt(mousePos.x, mousePos.y);
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            float startX = player.getX() + 16;
-            float startY = player.getY() + 16;
-            projectiles.add(new Projectile(startX, startY, player.getRotation(),20));
-            player.attack();
+            gameManager.shootProjectile();
+            gameManager.player.attack();
         }
-        player.update(delta);
-        Iterator<Projectile> iter = projectiles.iterator();
-        while (iter.hasNext()) {
-            Projectile p = iter.next();
-            p.update(delta);
+    }
 
-            if (CollisionChecker.isCollisionWithWall(p)) {
-                iter.remove();
-            } else {
-                Enemy e = checkWithEnemy(p);
-                if (e != null) {
-                    e.takeDamage(p.getDamage());
-                    iter.remove();
-                }
-            }
+    private void drawWorld() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        }
-        camera.position.set(player.getX() + 16, player.getY() + 16, 0);
+        camera.position.set(
+            gameManager.player.getX() + 16f,
+            gameManager.player.getY() + 16f,
+            0f
+        );
         camera.update();
         renderer.setView(camera);
         renderer.render();
 
-        Iterator<Enemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext()) {
-            Enemy enemy = enemyIterator.next();
-            enemy.update(delta);
-            if (enemy.isReadyForRemoval()) {
-                enemy.dispose();
-                enemyIterator.remove();
-            }
-        }
-
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        for (Projectile p : projectiles) {
-            p.render(shapeRenderer);
-        }
-        player.render(shapeRenderer);
-        enemyGenerator.render(shapeRenderer);
+        gameManager.drawEntities(shapeRenderer);
         shapeRenderer.end();
 
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
-        player.render(spriteBatch);
-        for (Enemy enemy : enemies) {
-            enemy.render(spriteBatch);
-        }
+        gameManager.drawSprites(spriteBatch);
         spriteBatch.end();
+    }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            game.showSkillTree();
+    private void updateAndDrawTransition(float delta) {
+        if (currentState == ScreenState.PLAYING) return;
+        transitionTimer += delta;
+
+        if (currentState == ScreenState.FADING_OUT
+            && transitionTimer >= TRANSITION_DURATION) {
+            gameManager.startNewWave();
+            currentState = ScreenState.FADING_IN;
+            transitionTimer = 0f;
+        } else if (currentState == ScreenState.FADING_IN
+            && transitionTimer >= TRANSITION_DURATION) {
+            currentState = ScreenState.PLAYING;
+            transitionTimer = 0f;
+            return;
         }
-        if (stage != null) {
-            stage.act(delta);
-            stage.draw();
-        }
-    }
-    private void resolvePlayerCoordinates(){
-        float x= player.getX();
-        float y= player.getY();
-        int xGrid = (int) (x / 16);
-        int yGrid = (int) (y / 16);
-        if(Map.map[xGrid][yGrid] !=0){
-            while(Map.map[xGrid][yGrid] !=0){
-                xGrid--;
-                yGrid--;
-            }
-            x=xGrid*16;
-            y=yGrid*16;
-            player.setX(x);
-            player.setY(y);
-        }
-    }
-    private Enemy checkWithEnemy(Projectile p) {
-        for (Enemy e : enemies) {
-            if (!e.isDead() && CollisionChecker.isCollision(p, e)) {
-                return e;
-            }
-        }
-        return null;
+
+        float alpha = Math.min(transitionTimer / TRANSITION_DURATION, 1f);
+        if (currentState == ScreenState.FADING_IN) alpha = 1f - alpha;
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.getProjectionMatrix().setToOrtho2D(
+            0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()
+        );
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0, 0, 0, alpha);
+        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     @Override
     public void dispose() {
-        if (map != null) map.dispose();
-        if (renderer != null) renderer.dispose();
-        if (shapeRenderer != null) shapeRenderer.dispose();
-        if (spriteBatch != null) spriteBatch.dispose();
-        if (player != null) player.dispose();
-        if (enemies != null) {
-            for (Enemy enemy : enemies) enemy.dispose();
-        }
-        if (enemyGenerator != null) enemyGenerator.dispose();
+        gameManager.dispose();
+        map.dispose();
+        renderer.dispose();
+        shapeRenderer.dispose();
+        spriteBatch.dispose();
         super.dispose();
     }
 }

@@ -68,6 +68,10 @@ public abstract class Entity implements Disposable {
         return animator == null || animator.isFinished();
     }
 
+    protected void resetAnimation() {
+        if (animator != null) animator.reset();
+    }
+
     public float getX() { return x; }
     public float getY() { return y; }
 

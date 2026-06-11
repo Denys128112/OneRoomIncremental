@@ -7,6 +7,7 @@ public class Projectile extends Entity {
     private float dx;
     private float dy;
     private int damage;
+    public boolean isEnemyProjectile=false;
     public Projectile(float x, float y, float angle,  int damage) {
         super(x, y, 8, 8, 500f, Color.YELLOW);
         this.rotation = angle;
