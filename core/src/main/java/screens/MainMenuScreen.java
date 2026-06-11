@@ -1,6 +1,7 @@
 package screens;
 
 import Services.Main;
+import com.badlogic.gdx.graphics.Color;
 import ui.SettingsWindow;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -44,10 +45,11 @@ public class MainMenuScreen extends BaseScreen {
         title.setAlignment(Align.center);
         title.setWrap(true);
         Label subtitle = new Label("ІНКРЕМЕНТАЛЬНА ГРА", game.getSkin(), "heading");
+        subtitle.setColor(Color.BLUE);
         subtitle.setAlignment(Align.center);
         subtitle.setWrap(true);
         titleLayer.add(title).width(860f).row();
-        titleLayer.add(subtitle).width(860f).padTop(10f);
+        titleLayer.add(subtitle).width(860f).padTop(20f);
         logo.add(titleLayer);
         root.add(logo).width(970f).height(320f).padBottom(24f).row();
 

@@ -5,16 +5,28 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import Services.CollisionChecker;
+import entities.animation.SpriteSheetAnimator;
+import entities.animation.SpriteSheetLayout;
 import stub.GameStateStub;
 
 public class Player extends Entity {
 
     public Player(float x, float y) {
         super(x, y, 16, 16, 200f, Color.BLUE);
+        setAnimator(new SpriteSheetAnimator(
+            "heroes/hero-2-topdown.png",
+            32,
+            32,
+            32f,
+            32f,
+            SpriteSheetLayout.threeDirectionsMirrored()
+        ));
     }
 
     @Override
     public void update(float deltaTime) {
+        float startX = x;
+        float startY = y;
         float currentSpeed = speed;
         if (Gdx.input.isKeyPressed(Keys.SPACE)) {
             currentSpeed = speed * 3f;
@@ -43,6 +55,7 @@ public class Player extends Entity {
             y = oldY;
             bounds.y = y + offsetY;
         }
+        updateAnimation(deltaTime, x - startX, y - startY);
     }
 
     public void lookAt(float targetX, float targetY) {
@@ -52,7 +65,12 @@ public class Player extends Entity {
         this.rotation = angleRad * MathUtils.radiansToDegrees;
     }
 
+    public void attack() {
+        playAttackAnimation();
+    }
+
     public void takeDamage(int damage) {
+        playHurtAnimation();
         switch (damage){
             case 1:
             GameStateStub.damageOneQuarter();

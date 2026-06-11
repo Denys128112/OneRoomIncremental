@@ -8,9 +8,9 @@
 
 All three sheets use the same layout:
 
-- Sheet size: `384x256`
+- Sheet size: `576x256`
 - Grid: `12 columns x 4 rows`
-- Frame size: `32x64`
+- Frame size: `48x64`
 - Transparent background
 
 Rows:

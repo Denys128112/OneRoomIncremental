@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -38,6 +39,7 @@ public class GameScreen extends BaseScreen {
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
+    private SpriteBatch spriteBatch;
     private Player player;
     private Vector3 mousePos = new Vector3();
     private ArrayList<Projectile> projectiles;
@@ -60,6 +62,7 @@ public class GameScreen extends BaseScreen {
         camera.zoom = 1F;
         camera.update();
         shapeRenderer = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
         projectiles = new ArrayList<>();
 
         hud = new GameHUD(game.getSkin(), state);
@@ -83,6 +86,7 @@ public class GameScreen extends BaseScreen {
             float startX = player.getX() + 16;
             float startY = player.getY() + 16;
             projectiles.add(new Projectile(startX, startY, player.getRotation(),20));
+            player.attack();
         }
         player.update(delta);
         Iterator<Projectile> iter = projectiles.iterator();
@@ -96,9 +100,6 @@ public class GameScreen extends BaseScreen {
                 Enemy e = checkWithEnemy(p);
                 if (e != null) {
                     e.takeDamage(p.getDamage());
-                    if(e.getHp()<=0){
-                        enemies.remove(e);
-                    }
                     iter.remove();
                 }
             }
@@ -108,6 +109,17 @@ public class GameScreen extends BaseScreen {
         camera.update();
         renderer.setView(camera);
         renderer.render();
+
+        Iterator<Enemy> enemyIterator = enemies.iterator();
+        while (enemyIterator.hasNext()) {
+            Enemy enemy = enemyIterator.next();
+            enemy.update(delta);
+            if (enemy.isReadyForRemoval()) {
+                enemy.dispose();
+                enemyIterator.remove();
+            }
+        }
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
@@ -115,11 +127,17 @@ public class GameScreen extends BaseScreen {
             p.render(shapeRenderer);
         }
         player.render(shapeRenderer);
-        for(Enemy e:enemies){
-            e.update(delta);
-        }
         enemyGenerator.render(shapeRenderer);
         shapeRenderer.end();
+
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
+        player.render(spriteBatch);
+        for (Enemy enemy : enemies) {
+            enemy.render(spriteBatch);
+        }
+        spriteBatch.end();
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             game.showSkillTree();
         }
@@ -146,7 +164,7 @@ public class GameScreen extends BaseScreen {
     }
     private Enemy checkWithEnemy(Projectile p) {
         for (Enemy e : enemies) {
-            if (CollisionChecker.isCollision(p, e)) {
+            if (!e.isDead() && CollisionChecker.isCollision(p, e)) {
                 return e;
             }
         }
@@ -158,6 +176,12 @@ public class GameScreen extends BaseScreen {
         if (map != null) map.dispose();
         if (renderer != null) renderer.dispose();
         if (shapeRenderer != null) shapeRenderer.dispose();
+        if (spriteBatch != null) spriteBatch.dispose();
+        if (player != null) player.dispose();
+        if (enemies != null) {
+            for (Enemy enemy : enemies) enemy.dispose();
+        }
+        if (enemyGenerator != null) enemyGenerator.dispose();
         super.dispose();
     }
 }
