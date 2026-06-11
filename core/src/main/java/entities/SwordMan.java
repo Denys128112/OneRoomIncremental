@@ -1,12 +1,10 @@
 package entities;
 
-public class swordMan extends Enemy{
-    private int attackDamage = 1;
-    private float attackCooldown = 1f;
-    private float attackTimer = 0f;
+public class SwordMan extends Enemy{
 
-    public swordMan(float x, float y, Player player) {
-        super(x, y, player,100);
+
+    public SwordMan(float x, float y, Player player,float speed,int hp,int attackDamage,float attackCooldown,float attackTimer) {
+        super(x, y, player,speed,hp,attackDamage,attackCooldown,attackTimer);
     }
     public void update(float deltaTime) {
         super.update(deltaTime);
