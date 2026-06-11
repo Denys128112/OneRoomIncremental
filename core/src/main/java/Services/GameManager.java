@@ -1,7 +1,9 @@
 package Services;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,10 +22,12 @@ public class GameManager {
 
     private EnemyGenerator enemyGenerator;
     private TiledMap map;
+    private final GameStateStub state;
     public boolean isWaveCleared = false;
 
-    public GameManager(TiledMap map) {
+    public GameManager(TiledMap map, GameStateStub state) {
         this.map = map;
+        this.state = state;
         this.player = new Player(400, 300);
         this.projectiles = new ArrayList<>();
         this.deadEnemies = new ArrayList<>();
@@ -35,13 +39,24 @@ public class GameManager {
 
     public void update(float delta) {
         player.update(delta);
-        for (Enemy e : enemies) {
-            e.update(delta);
+        Iterator<Enemy> enemyIterator = enemies.iterator();
+        while (enemyIterator.hasNext()) {
+            Enemy enemy = enemyIterator.next();
+            enemy.update(delta);
+            if (enemy.isReadyForRemoval()) {
+                state.addExperience(enemy.getExperienceReward());
+                state.addCredits(BigDecimal.valueOf(enemy.getCreditReward()));
+                deadEnemies.add(enemy);
+                enemyIterator.remove();
+            }
         }
         handleCollisions(delta);
         if (!enemiesToAdd.isEmpty()) {
             enemies.addAll(enemiesToAdd);
             enemiesToAdd.clear();
+        }
+        if (enemies.isEmpty()) {
+            isWaveCleared = true;
         }
     }
     private void handleCollisions(float delta) {
@@ -62,13 +77,6 @@ public class GameManager {
                 Enemy e = checkWithEnemy(p);
                 if (e != null) {
                     e.takeDamage(p.getDamage());
-                    if (e.getHp() <= 0) {
-                        enemies.remove(e);
-                        deadEnemies.add(e);
-                        if (enemies.isEmpty()) {
-                            isWaveCleared = true;
-                        }
-                    }
                     iter.remove();
                 }
             }
@@ -83,13 +91,19 @@ public class GameManager {
         enemyGenerator.render(shapeRenderer);
     }
 
+    public void drawSprites(Batch batch) {
+        player.render(batch);
+        enemyGenerator.render(batch);
+    }
+
     public void startNewWave() {
-        GameStateStub.wave++;
+        state.nextWave();
+        for (Enemy enemy : deadEnemies) enemy.dispose();
         deadEnemies.clear();
         isWaveCleared = false;
         Map.createVisualMap(map);
         resolvePlayerCoordinates();
-        enemyGenerator.generate(Map.map, GameStateStub.wave, player);
+        enemyGenerator.generate(Map.map, state.getWave(), player);
 
     }
 
@@ -101,7 +115,7 @@ public class GameManager {
 
     private Enemy checkWithEnemy(Projectile p) {
         for (Enemy e : enemies) {
-            if (CollisionChecker.isCollision(p, e)) {
+            if (!e.isDead() && CollisionChecker.isCollision(p, e)) {
                 return e;
             }
         }
@@ -138,5 +152,12 @@ public class GameManager {
         player.setY(newY);
         player.bounds.x = newX + 2f;
         player.bounds.y = newY + 2f;
+    }
+
+    public void dispose() {
+        player.dispose();
+        for (Enemy enemy : enemies) enemy.dispose();
+        for (Enemy enemy : deadEnemies) enemy.dispose();
+        enemyGenerator.dispose();
     }
 }

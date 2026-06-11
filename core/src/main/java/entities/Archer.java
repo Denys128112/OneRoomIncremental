@@ -18,6 +18,10 @@ public class Archer extends Enemy {
 
     @Override
     public void update(float deltaTime) {
+        if (isDead()) {
+            super.update(deltaTime);
+            return;
+        }
         if (attackTimer > 0) {
             attackTimer -= deltaTime;
         }
@@ -27,7 +31,6 @@ public class Archer extends Enemy {
         if (distanceToPlayer > attackRange) {
             super.update(deltaTime);
         } else {
-
             float angleRad = MathUtils.atan2(player.getY() - this.y, player.getX() - this.x);
             this.rotation = angleRad * MathUtils.radiansToDegrees;
 
@@ -35,12 +38,14 @@ public class Archer extends Enemy {
                 shoot();
                 attackTimer = attackCooldown;
             }
+            updateAnimation(deltaTime, 0f, 0f);
         }
 
         bounds.setPosition(x, y);
     }
 
     void shoot() {
+        playAttackAnimation();
         float startX = this.x + this.width / 2;
         float startY = this.y + this.height / 2;
         Projectile arrow = new Projectile(startX, startY, this.rotation, this.attackDamage);

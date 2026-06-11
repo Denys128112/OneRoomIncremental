@@ -49,8 +49,10 @@ public class GameHUD extends Table {
         statusPanel.setBackground(skin.getDrawable("panel-strong"));
         statusPanel.pad(16f);
         waveLabel = new Label("", skin, "heading");
+        waveLabel.setFontScale(0.78f);
         timerLabel = new Label("", skin);
         creditsLabel = new Label("", skin, "gold");
+        creditsLabel.setFontScale(0.78f);
         Image creditsIcon = new Image(skin.getDrawable("credits-icon"));
         statusPanel.add(waveLabel).right().colspan(2).row();
         statusPanel.add(timerLabel).right().colspan(2).padTop(4f).row();

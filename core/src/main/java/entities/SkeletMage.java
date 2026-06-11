@@ -10,17 +10,23 @@ public class SkeletMage extends Archer {
     private float teleportCooldown = 3f;
     private float teleportTimer = teleportCooldown;
     public SkeletMage(float x, float y, Player player, List<Projectile> projectileList) {
-        super(x, y, player, 80f, 140, 1, 1f, 0.5f, projectileList);
+        super(x, y, player, 80f, 110, 1, 1f, 0.5f, projectileList);
+        EnemyAnimationFactory.attachSmall(this, "enemies/base/enemy-4-topdown.png");
     }
 
     @Override
     public void update(float deltaTime) {
+        if (isDead()) {
+            super.update(deltaTime);
+            return;
+        }
         if (attackTimer > 0) {
             attackTimer -= deltaTime;
         }
         teleportTimer -= deltaTime;
         if (teleportTimer <= 0) {
             teleport();
+            playAttackAnimation();
             teleportTimer = teleportCooldown;
         } else {
 
@@ -34,6 +40,12 @@ public class SkeletMage extends Archer {
         }
 
         bounds.setPosition(x, y);
+        updateAnimation(deltaTime, 0f, 0f);
+    }
+
+    @Override
+    public int getExperienceReward() {
+        return 3;
     }
 
     private void teleport() {
@@ -63,4 +75,3 @@ public class SkeletMage extends Archer {
         }
     }
 }
-

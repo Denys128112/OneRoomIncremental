@@ -22,10 +22,15 @@ public class Necromant extends Enemy {
         this.realPlayer = player;
         this.deadEnemies = deadEnemies;
         this.enemiesToAdd = enemiesToAdd;
+        EnemyAnimationFactory.attachSmall(this, "enemies/base/enemy-4-topdown.png");
     }
 
     @Override
     public void update(float deltaTime) {
+        if (isDead()) {
+            super.update(deltaTime);
+            return;
+        }
         fleeTimer += deltaTime;
         if (fleeTimer >= 0.5f) {
             fleeTimer = 0;

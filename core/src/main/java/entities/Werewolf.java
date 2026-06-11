@@ -19,11 +19,20 @@ public class Werewolf extends Enemy {
     public Werewolf(float x, float y, Player player) {
         super(x, y, player, 100f, 140, 1, 0.2f, 0.5f);
         this.color = Color.ORANGE;
+        EnemyAnimationFactory.attachLarge(
+            this, "enemies/werewolf/black-werewolf-topdown.png", 42f, 56f
+        );
     }
 
     @Override
     public void update(float deltaTime) {
         if (player == null) return;
+        if (isDead()) {
+            super.update(deltaTime);
+            return;
+        }
+        float previousX = x;
+        float previousY = y;
         if (stunTimer > 0) {
             stunTimer -= deltaTime;
             this.color = Color.GRAY;
@@ -69,10 +78,12 @@ public class Werewolf extends Enemy {
                     isDashing = true;
                     dashTimer = DASH_DURATION;
                     dashAngle = angleRad;
+                    playAttackAnimation();
                 }
             }
         }
         bounds.setPosition(x, y);
+        updateAnimation(deltaTime, x - previousX, y - previousY);
     }
 
 
