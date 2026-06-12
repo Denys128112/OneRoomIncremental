@@ -3,6 +3,7 @@ package entities;
 import com.badlogic.gdx.math.Vector2;
 
 public class Tengu extends Enemy {
+    private final boolean yamabushi;
     private float strikeCooldown;
 
     public Tengu(float x, float y, Player player, boolean yamabushi) {
@@ -16,6 +17,7 @@ public class Tengu extends Enemy {
             yamabushi ? 24 : 18,
             yamabushi ? 18 : 12
         );
+        this.yamabushi = yamabushi;
         EnemyAnimationFactory.attachLarge(
             this,
             yamabushi
@@ -24,6 +26,10 @@ public class Tengu extends Enemy {
             42f,
             56f
         );
+    }
+
+    public boolean isYamabushi() {
+        return yamabushi;
     }
 
     @Override

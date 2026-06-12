@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import stub.GameStateStub;
 import ui.GameHUD;
+import ui.EnemyTrackerPanel;
 import ui.InstructionsWindow;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -40,6 +41,7 @@ public class GameScreen extends BaseScreen {
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch spriteBatch;
     private final GameManager gameManager;
+    private final EnemyTrackerPanel enemyTracker;
 
     private float hudRefresh;
     private float transitionTimer;
@@ -64,6 +66,8 @@ public class GameScreen extends BaseScreen {
         spriteBatch = new SpriteBatch();
         hud = new GameHUD(game.getSkin(), state);
         stage.addActor(hud);
+        enemyTracker = new EnemyTrackerPanel(game.getSkin(), GameManager.enemies);
+        stage.addActor(enemyTracker);
         addInstructionsButton();
     }
 
@@ -73,15 +77,15 @@ public class GameScreen extends BaseScreen {
             toggleInstructions();
         }
 
-        if (!instructionsOpen) {
+        if (!isOverlayOpen()) {
             state.update(delta);
         }
         updateHud(delta);
-        if (!instructionsOpen) {
+        if (!isOverlayOpen()) {
             updateAimAndInput();
         }
 
-        if (!instructionsOpen && currentState == ScreenState.PLAYING) {
+        if (!isOverlayOpen() && currentState == ScreenState.PLAYING) {
             gameManager.update(delta);
             if (gameManager.isWaveCleared) {
                 currentState = ScreenState.FADING_OUT;
@@ -89,12 +93,12 @@ public class GameScreen extends BaseScreen {
             }
         }
 
-        if (!instructionsOpen && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+        if (!isOverlayOpen() && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             game.showSkillTree();
         }
 
         drawWorld();
-        if (!instructionsOpen) {
+        if (!isOverlayOpen()) {
             updateAndDrawTransition(delta);
         }
         drawInventory();
@@ -143,8 +147,13 @@ public class GameScreen extends BaseScreen {
         hudRefresh += delta;
         if (hudRefresh >= 0.1f) {
             hud.refresh();
+            enemyTracker.refresh();
             hudRefresh = 0f;
         }
+    }
+
+    private boolean isOverlayOpen() {
+        return instructionsOpen || enemyTracker.isDetailsOpen();
     }
 
     private void updateAimAndInput() {
@@ -268,6 +277,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void dispose() {
+        enemyTracker.dispose();
         gameManager.dispose();
         map.dispose();
         renderer.dispose();
