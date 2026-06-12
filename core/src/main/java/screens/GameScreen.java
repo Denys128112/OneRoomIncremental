@@ -80,6 +80,9 @@ public class GameScreen extends BaseScreen {
         updateAndDrawTransition(delta);
         stage.act(delta);
         stage.draw();
+
+        drawInventory();
+
     }
 
     private void updateHud(float delta) {
@@ -94,10 +97,6 @@ public class GameScreen extends BaseScreen {
         mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
         gameManager.player.lookAt(mousePos.x, mousePos.y);
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            gameManager.shootProjectile();
-            gameManager.player.attack();
-        }
     }
 
     private void drawWorld() {
@@ -153,6 +152,65 @@ public class GameScreen extends BaseScreen {
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
+
+
+    private void drawInventory() {
+        int slotSize = 45;
+        int spacing = 8;
+        int totalWidth = (slotSize * 4) + (spacing * 3);
+
+        float worldWidth = stage.getViewport().getWorldWidth();
+        float worldHeight = stage.getViewport().getWorldHeight();
+
+        float startX = (worldWidth - totalWidth) / 2f;
+        float startY = 20f;
+
+        shapeRenderer.setProjectionMatrix(stage.getViewport().getCamera().combined);
+        spriteBatch.setProjectionMatrix(stage.getViewport().getCamera().combined);
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        for (int i = 0; i < 4; i++) {
+            float slotX = startX + i * (slotSize + spacing);
+
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            if (gameManager.player.inventory[i] != null) {
+                shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 0.7f);
+            } else {
+                shapeRenderer.setColor(0.08f, 0.08f, 0.08f, 0.6f);
+            }
+            shapeRenderer.rect(slotX, startY, slotSize, slotSize);
+            shapeRenderer.end();
+
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            if (gameManager.player.selectedSlot == i) {
+                shapeRenderer.setColor(1f, 0.8f, 0f, 1f);
+                shapeRenderer.rect(slotX, startY, slotSize, slotSize);
+                shapeRenderer.rect(slotX + 1, startY + 1, slotSize - 2, slotSize - 2);
+            } else {
+                shapeRenderer.setColor(0.4f, 0.4f, 0.4f, 0.8f);
+                shapeRenderer.rect(slotX, startY, slotSize, slotSize);
+            }
+            shapeRenderer.end();
+        }
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        spriteBatch.begin();
+        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle labelStyle = game.getSkin().get(com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle.class);
+        com.badlogic.gdx.graphics.g2d.BitmapFont font = labelStyle.font;
+        font.setColor(com.badlogic.gdx.graphics.Color.WHITE);
+
+        for (int i = 0; i < 4; i++) {
+            float slotX = startX + i * (slotSize + spacing);
+            String text = String.valueOf(i + 1);
+
+            font.draw(spriteBatch, text, slotX + 19f, startY + 29f);
+        }
+        spriteBatch.end();
+    }
+
+
 
     @Override
     public void dispose() {

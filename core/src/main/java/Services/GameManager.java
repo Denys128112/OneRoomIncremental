@@ -17,7 +17,7 @@ public class GameManager {
     public static List<Enemy> enemiesToAdd=new ArrayList<>();
     public Player player;
     public static List<Projectile> projectiles;
-    public List<Enemy> enemies;
+    public static List<Enemy> enemies;
     public static List<Enemy> deadEnemies;
 
     private EnemyGenerator enemyGenerator;
@@ -59,29 +59,49 @@ public class GameManager {
             isWaveCleared = true;
         }
     }
+
+
+
     private void handleCollisions(float delta) {
         Iterator<Projectile> iter = projectiles.iterator();
         while (iter.hasNext()) {
             Projectile p = iter.next();
             p.update(delta);
+
             if (CollisionChecker.isCollisionWithWall(p)) {
                 iter.remove();
                 continue;
             }
+
             if (p.isEnemyProjectile) {
                 if (p.bounds.overlaps(player.bounds)) {
                     player.takeDamage(p.getDamage());
                     iter.remove();
                 }
-            } else {
-                Enemy e = checkWithEnemy(p);
-                if (e != null) {
-                    e.takeDamage(p.getDamage());
-                    iter.remove();
+            }
+            else {
+                boolean bulletDestroyed = false;
+
+                for (Enemy e : enemies) {
+                    if (e.isDead()) continue;
+
+                    if (CollisionChecker.isCollision(p, e) && !p.hitEnemies.contains(e)) {
+                        e.takeDamage(p.getDamage());
+                        p.hitEnemies.add(e);
+
+                        if (!p.isPiercing) {
+                            iter.remove();
+                            bulletDestroyed = true;
+                            break;
+                        }
+                    }
                 }
+
+                if (bulletDestroyed) continue;
             }
         }
     }
+
 
     public void drawEntities(ShapeRenderer shapeRenderer) {
         for (Projectile p : projectiles) {
@@ -108,19 +128,9 @@ public class GameManager {
     }
 
     public void shootProjectile() {
-        float startX = player.getX() + 16;
-        float startY = player.getY() + 16;
-        projectiles.add(new Projectile(startX, startY, player.getRotation(), 20));
+        player.attack();
     }
 
-    private Enemy checkWithEnemy(Projectile p) {
-        for (Enemy e : enemies) {
-            if (!e.isDead() && CollisionChecker.isCollision(p, e)) {
-                return e;
-            }
-        }
-        return null;
-    }
 
     private void resolvePlayerCoordinates() {
         int cx = (int) (player.getX() / 16);

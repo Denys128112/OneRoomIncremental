@@ -35,9 +35,7 @@ public class Kitsune extends Archer {
         float angle = MathUtils.atan2(player.getY() - y, player.getX() - x)
             * MathUtils.radiansToDegrees;
         for (float offset : new float[] {-18f, 0f, 18f}) {
-            Projectile foxFire = new Projectile(x + 8f, y + 8f, angle + offset, attackDamage);
-            foxFire.isEnemyProjectile = true;
-            foxFire.color = Color.FIREBRICK;
+            Projectile foxFire = new Projectile(x + 8f, y + 8f, angle + offset, attackDamage, 2, false, Color.FIREBRICK, true);
             projectiles.add(foxFire);
         }
     }
