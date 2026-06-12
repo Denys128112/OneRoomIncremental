@@ -1,6 +1,7 @@
 package Services;
 
 import screens.GameScreen;
+import screens.DifficultyScreen;
 import screens.MainMenuScreen;
 import screens.UpgradeScreen;
 import stub.GameStateStub;
@@ -34,6 +35,15 @@ public class Main extends Game {
 
     public void showGame() {
         switchTo(new GameScreen(this));
+    }
+
+    public void showDifficultySelection() {
+        switchTo(new DifficultyScreen(this));
+    }
+
+    public void startGame(DifficultyLevel difficulty) {
+        gameState.startNewRun(difficulty);
+        showGame();
     }
 
     public void showUpgrades() {

@@ -53,7 +53,7 @@ public class MainMenuScreen extends BaseScreen {
         logo.add(titleLayer);
         root.add(logo).width(970f).height(320f).padBottom(24f).row();
 
-        addButton(root, "ПОЧАТИ ГРУ", game::showGame);
+        addButton(root, "ПОЧАТИ ГРУ", game::showDifficultySelection);
         addButton(root, "НАЛАШТУВАННЯ", () ->
             new SettingsWindow(game.getSkin(), game.getGameState(), () -> { }).showCentered(stage));
         addButton(root, "ВИХІД", Gdx.app::exit);

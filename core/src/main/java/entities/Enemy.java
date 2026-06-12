@@ -19,8 +19,8 @@ public class Enemy extends Entity {
     private int lastKnownPlayerGridX = -1;
     private int lastKnownPlayerGridY = -1;
     private int hp;
-    private final int experienceReward;
-    private final int creditReward;
+    private int experienceReward;
+    private int creditReward;
 
     public Enemy(
         float x,
@@ -185,5 +185,18 @@ public class Enemy extends Entity {
 
     public int getCreditReward() {
         return creditReward;
+    }
+
+    public void applyDifficulty(
+        float healthMultiplier,
+        float speedMultiplier,
+        float damageMultiplier,
+        float rewardMultiplier
+    ) {
+        hp = Math.max(1, Math.round(hp * healthMultiplier));
+        speed *= speedMultiplier;
+        attackDamage = Math.max(1, Math.round(attackDamage * damageMultiplier));
+        experienceReward = Math.max(1, Math.round(experienceReward * rewardMultiplier));
+        creditReward = Math.max(1, Math.round(creditReward * rewardMultiplier));
     }
 }

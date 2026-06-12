@@ -31,7 +31,7 @@ public class GameManager {
         this.player = new Player(400, 300);
         this.projectiles = new ArrayList<>();
         this.deadEnemies = new ArrayList<>();
-        this.enemyGenerator = new EnemyGenerator();
+        this.enemyGenerator = new EnemyGenerator(state.getLevelManager());
         resolvePlayerCoordinates();
         this.enemies = enemyGenerator.enemyList;
         enemyGenerator.generate(Map.map, GameStateStub.wave, player);
