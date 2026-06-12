@@ -1,5 +1,7 @@
 package stub;
 
+import Services.DifficultyLevel;
+import Services.LevelManager;
 import com.badlogic.gdx.utils.Array;
 import java.math.BigDecimal;
 
@@ -11,6 +13,7 @@ import java.math.BigDecimal;
  */
 public class GameStateStub {
     private final Array<UpgradeStub> upgrades = new Array<>();
+    private final LevelManager levelManager = new LevelManager();
     private BigDecimal credits = new BigDecimal("1250");
     private static int healthQuarters = 18;
     private int maxHealthQuarters = 24;
@@ -65,6 +68,14 @@ public class GameStateStub {
 
     public void nextWave() {
         wave++;
+        waveSeconds = 0f;
+    }
+
+    public void startNewRun(DifficultyLevel difficulty) {
+        levelManager.selectDifficulty(difficulty);
+        healthQuarters = maxHealthQuarters;
+        experience = 0;
+        wave = 1;
         waveSeconds = 0f;
     }
 
@@ -172,5 +183,9 @@ public class GameStateStub {
 
     public int getPrestige() {
         return prestige;
+    }
+
+    public LevelManager getLevelManager() {
+        return levelManager;
     }
 }

@@ -19,8 +19,9 @@ public class Enemy extends Entity {
     private int lastKnownPlayerGridX = -1;
     private int lastKnownPlayerGridY = -1;
     private int hp;
-    private final int experienceReward;
-    private final int creditReward;
+    private int maxHp;
+    private int experienceReward;
+    private int creditReward;
 
     public Enemy(
         float x,
@@ -50,6 +51,7 @@ public class Enemy extends Entity {
         super(x, y, 16, 16, speed, Color.RED);
         this.player = player;
         this.hp = hp;
+        this.maxHp = hp;
         this.attackDamage = attackDamage;
         this.attackCooldown = attackCooldown;
         this.attackTimer = attackTimer;
@@ -166,8 +168,21 @@ public class Enemy extends Entity {
         return hp;
     }
 
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public int getAttackDamage() {
+        return attackDamage;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
     protected void setHp(int hp) {
         this.hp = hp;
+        maxHp = Math.max(maxHp, hp);
         if (hp > 0) resetAnimation();
     }
 
@@ -185,5 +200,19 @@ public class Enemy extends Entity {
 
     public int getCreditReward() {
         return creditReward;
+    }
+
+    public void applyDifficulty(
+        float healthMultiplier,
+        float speedMultiplier,
+        float damageMultiplier,
+        float rewardMultiplier
+    ) {
+        hp = Math.max(1, Math.round(hp * healthMultiplier));
+        maxHp = hp;
+        speed *= speedMultiplier;
+        attackDamage = Math.max(1, Math.round(attackDamage * damageMultiplier));
+        experienceReward = Math.max(1, Math.round(experienceReward * rewardMultiplier));
+        creditReward = Math.max(1, Math.round(creditReward * rewardMultiplier));
     }
 }

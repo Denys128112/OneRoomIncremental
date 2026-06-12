@@ -15,6 +15,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import stub.GameStateStub;
 import ui.GameHUD;
+import ui.EnemyTrackerPanel;
+import ui.InstructionsWindow;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 public class GameScreen extends BaseScreen {
     private static final float TRANSITION_DURATION = 1f;
@@ -34,10 +41,13 @@ public class GameScreen extends BaseScreen {
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch spriteBatch;
     private final GameManager gameManager;
+    private final EnemyTrackerPanel enemyTracker;
 
     private float hudRefresh;
     private float transitionTimer;
     private ScreenState currentState = ScreenState.PLAYING;
+    private InstructionsWindow instructionsWindow;
+    private boolean instructionsOpen;
 
     public GameScreen(Main game) {
         super(game);
@@ -56,15 +66,26 @@ public class GameScreen extends BaseScreen {
         spriteBatch = new SpriteBatch();
         hud = new GameHUD(game.getSkin(), state);
         stage.addActor(hud);
+        enemyTracker = new EnemyTrackerPanel(game.getSkin(), GameManager.enemies);
+        stage.addActor(enemyTracker);
+        addInstructionsButton();
     }
 
     @Override
     public void render(float delta) {
-        state.update(delta);
-        updateHud(delta);
-        updateAimAndInput();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            toggleInstructions();
+        }
 
-        if (currentState == ScreenState.PLAYING) {
+        if (!isOverlayOpen()) {
+            state.update(delta);
+        }
+        updateHud(delta);
+        if (!isOverlayOpen()) {
+            updateAimAndInput();
+        }
+
+        if (!isOverlayOpen() && currentState == ScreenState.PLAYING) {
             gameManager.update(delta);
             if (gameManager.isWaveCleared) {
                 currentState = ScreenState.FADING_OUT;
@@ -72,25 +93,67 @@ public class GameScreen extends BaseScreen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+        if (!isOverlayOpen() && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             game.showSkillTree();
         }
 
         drawWorld();
-        updateAndDrawTransition(delta);
+        if (!isOverlayOpen()) {
+            updateAndDrawTransition(delta);
+        }
+        drawInventory();
         stage.act(delta);
         stage.draw();
 
-        drawInventory();
+    }
 
+    private void addInstructionsButton() {
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.bottom().right().pad(22f);
+
+        TextButton button = new TextButton("ІНСТРУКЦІЯ [H]", game.getSkin());
+        button.getLabel().setAlignment(Align.center);
+        button.getLabel().setFontScale(0.68f);
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                toggleInstructions();
+            }
+        });
+        overlay.add(button).width(255f).height(58f);
+        stage.addActor(overlay);
+    }
+
+    private void toggleInstructions() {
+        if (instructionsOpen) {
+            instructionsWindow.close();
+            return;
+        }
+        instructionsOpen = true;
+        instructionsWindow = new InstructionsWindow(
+            game.getSkin(),
+            state.getLevelManager().getDifficulty(),
+            "ПОВЕРНУТИСЯ ДО ГРИ",
+            () -> {
+                instructionsOpen = false;
+                instructionsWindow = null;
+            }
+        );
+        instructionsWindow.showCentered(stage);
     }
 
     private void updateHud(float delta) {
         hudRefresh += delta;
         if (hudRefresh >= 0.1f) {
             hud.refresh();
+            enemyTracker.refresh();
             hudRefresh = 0f;
         }
+    }
+
+    private boolean isOverlayOpen() {
+        return instructionsOpen || enemyTracker.isDetailsOpen();
     }
 
     private void updateAimAndInput() {
@@ -214,6 +277,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void dispose() {
+        enemyTracker.dispose();
         gameManager.dispose();
         map.dispose();
         renderer.dispose();

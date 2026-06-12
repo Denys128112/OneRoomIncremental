@@ -14,12 +14,18 @@ import entities.Enemy;
 import entities.Player;
 
 public class EnemyGenerator implements Disposable {
-    EnemyCreator creator= new EnemyCreator();
-    public List<Enemy> enemyList= new ArrayList<>();
+    private final EnemyCreator creator = new EnemyCreator();
+    private final LevelManager levelManager;
+    public List<Enemy> enemyList = new ArrayList<>();
     private static final int TILE_SIZE = 16;
     private static final int WALL_THICKNESS = 2;
+
+    public EnemyGenerator(LevelManager levelManager) {
+        this.levelManager = levelManager;
+    }
+
     public void generate(int[][] map, int wave, Player player) {
-        int targetEnemyCount = (int) (10 + 0.565f * Math.pow((wave - 1), 1.3));
+        int targetEnemyCount = levelManager.getEnemyCount(wave);
 
         Array<GridPoint2> freeTiles = new Array<>();
         for (int x = WALL_THICKNESS; x < map.length - WALL_THICKNESS; x++) {
@@ -38,7 +44,9 @@ public class EnemyGenerator implements Disposable {
             float spawnX = spawnPoint.x * TILE_SIZE;
             float spawnY = spawnPoint.y * TILE_SIZE;
             int type = chooseEnemyType(wave, i);
-            enemyList.add(creator.createEnemy(spawnX, spawnY, type, player));
+            Enemy enemy = creator.createEnemy(spawnX, spawnY, type, player);
+            levelManager.configureEnemy(enemy);
+            enemyList.add(enemy);
         }
     }
 

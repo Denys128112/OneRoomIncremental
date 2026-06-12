@@ -3,6 +3,7 @@ package screens;
 import Services.Main;
 import com.badlogic.gdx.graphics.Color;
 import ui.SettingsWindow;
+import ui.InstructionsWindow;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -53,7 +54,14 @@ public class MainMenuScreen extends BaseScreen {
         logo.add(titleLayer);
         root.add(logo).width(970f).height(320f).padBottom(24f).row();
 
-        addButton(root, "ПОЧАТИ ГРУ", game::showGame);
+        addButton(root, "ПОЧАТИ ГРУ", game::showDifficultySelection);
+        addButton(root, "ІНСТРУКЦІЯ", () ->
+            new InstructionsWindow(
+                game.getSkin(),
+                game.getGameState().getLevelManager().getDifficulty(),
+                "ЗАКРИТИ",
+                () -> { }
+            ).showCentered(stage));
         addButton(root, "НАЛАШТУВАННЯ", () ->
             new SettingsWindow(game.getSkin(), game.getGameState(), () -> { }).showCentered(stage));
         addButton(root, "ВИХІД", Gdx.app::exit);
