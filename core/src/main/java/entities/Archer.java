@@ -48,9 +48,7 @@ public class Archer extends Enemy {
         playAttackAnimation();
         float startX = this.x + this.width / 2;
         float startY = this.y + this.height / 2;
-        Projectile arrow = new Projectile(startX, startY, this.rotation, this.attackDamage);
-        arrow.isEnemyProjectile = true;
-        arrow.color = Color.RED;
+        Projectile arrow = new Projectile(startX, startY, this.rotation, this.attackDamage, 1, false, Color.RED, true);
         projectileList.add(arrow);
     }
 }

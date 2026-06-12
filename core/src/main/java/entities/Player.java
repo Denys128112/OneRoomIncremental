@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import Services.CollisionChecker;
 import entities.animation.SpriteSheetAnimator;
 import entities.animation.SpriteSheetLayout;
@@ -15,6 +16,9 @@ public class Player extends Entity {
     private float poisonTickTimer;
     private int poisonDamage;
 
+    public Weapon[] inventory = new Weapon[4];
+    public int selectedSlot = 0;
+
     public Player(float x, float y) {
         super(x, y, 16, 16, 200f, Color.BLUE);
         setAnimator(new SpriteSheetAnimator(
@@ -25,11 +29,28 @@ public class Player extends Entity {
             32f,
             SpriteSheetLayout.threeDirectionsMirrored()
         ));
+
+        inventory[0] = new Sword(this);
+        inventory[1] = new Bow(this);
+        inventory[2] = new Staff(this);
+        inventory[3] = new Spear(this);
+
     }
 
     @Override
     public void update(float deltaTime) {
         updateStatusEffects(deltaTime);
+
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_1)) selectedSlot = 0;
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_2)) selectedSlot = 1;
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_3)) selectedSlot = 2;
+        if (Gdx.input.isKeyJustPressed(Keys.NUM_4)) selectedSlot = 3;
+
+        Weapon activeWeapon = inventory[selectedSlot];
+        if (activeWeapon != null) {
+            activeWeapon.update(deltaTime);
+        }
+
         float startX = x;
         float startY = y;
         if (stunTimer > 0f) {
@@ -75,7 +96,12 @@ public class Player extends Entity {
     }
 
     public void attack() {
-        playAttackAnimation();
+        Weapon activeWeapon = inventory[selectedSlot];
+
+        if (activeWeapon != null && activeWeapon.canAttack()) {
+            playAttackAnimation();
+            activeWeapon.attack();
+        }
     }
 
     public void takeDamage(int damage) {
@@ -105,4 +131,15 @@ public class Player extends Entity {
         }
         if (poisonTimer <= 0f) poisonDamage = 0;
     }
+
+    @Override
+    public void render(ShapeRenderer shapeRenderer) {
+        super.render(shapeRenderer);
+
+        Weapon activeWeapon = inventory[selectedSlot];
+        if (activeWeapon != null) {
+            activeWeapon.render(shapeRenderer);
+        }
+    }
+
 }
