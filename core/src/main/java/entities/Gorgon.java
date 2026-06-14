@@ -13,6 +13,7 @@ public class Gorgon extends Archer {
         EnemyAnimationFactory.attachLarge(
             this, "enemies/gorgon/gorgon-1-topdown.png", 42f, 56f
         );
+        this.setLootAmount(4);
     }
 
     @Override

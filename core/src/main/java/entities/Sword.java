@@ -1,6 +1,8 @@
 package entities;
 
+import Services.CollisionChecker;
 import Services.GameManager;
+import Services.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
@@ -36,6 +38,16 @@ public class Sword extends Weapon {
 
             if (distance <= hitRadius) {
                 enemy.takeDamage(damage);
+            }
+        }
+        Box box = null;
+        for (Box b : Map.boxes) {
+            float ex = b.getX() + b.width / 2;
+            float ey = b.getY() + b.height / 2;
+            float distance = (float) Math.hypot(ex - px, ey - py);
+            if (distance <= hitRadius) {
+                b.interact();
+                box = b;
             }
         }
         cooldownTimer = attackCooldown;

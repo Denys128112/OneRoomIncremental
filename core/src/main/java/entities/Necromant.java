@@ -12,7 +12,7 @@ public class Necromant extends Enemy {
     private List<Enemy> enemiesToAdd;
     private Vector2 fleeTarget = new Vector2();
     private float fleeTimer = 0;
-    private float reviveCooldown = 4.0f;
+    private float reviveCooldown = 8.0f;
     private float reviveTimer = 0f;
 
     public Necromant(float x, float y, Player player, List<Enemy> deadEnemies, List<Enemy> enemiesToAdd) {
@@ -23,6 +23,7 @@ public class Necromant extends Enemy {
         this.deadEnemies = deadEnemies;
         this.enemiesToAdd = enemiesToAdd;
         EnemyAnimationFactory.attachSmall(this, "enemies/base/enemy-4-topdown.png");
+        this.setLootAmount(3);
     }
 
     @Override

@@ -6,6 +6,7 @@ public class Minotaur extends SwordMan {
         EnemyAnimationFactory.attachLarge(
             this, "enemies/minotaur/minotaur-1-topdown.png", 54f, 72f
         );
+        this.setLootAmount(6);
         bounds.setSize(28f, 28f);
     }
 }

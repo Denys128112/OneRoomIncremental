@@ -92,9 +92,10 @@ public class GameScreen extends BaseScreen {
                 transitionTimer = 0f;
             }
         }
-
+        gameManager.handleChests(delta);
         if (!isOverlayOpen() && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             game.showSkillTree();
+            return;
         }
 
         drawWorld();

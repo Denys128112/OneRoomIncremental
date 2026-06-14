@@ -16,6 +16,7 @@ public class Kitsune extends Archer {
         EnemyAnimationFactory.attachLarge(
             this, "enemies/kitsune/kitsune-topdown.png", 42f, 56f
         );
+        this.setLootAmount(5);
     }
 
     @Override

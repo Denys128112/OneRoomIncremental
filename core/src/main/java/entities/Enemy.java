@@ -3,6 +3,8 @@ package entities;
 import Services.Map;
 import Services.PathFinder;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class Enemy extends Entity {
     private int maxHp;
     private int experienceReward;
     private int creditReward;
-
+    protected int lootAmount=1;
     public Enemy(
         float x,
         float y,
@@ -58,7 +60,6 @@ public class Enemy extends Entity {
         this.experienceReward = experienceReward;
         this.creditReward = creditReward;
     }
-
     @Override
     public void update(float deltaTime) {
         if (player == null) return;
@@ -70,10 +71,15 @@ public class Enemy extends Entity {
         float previousX = x;
         float previousY = y;
         if (pathNeedsRecalculation()) {
-            int startX = (int) ((x + 8f) / TILE_SIZE);
-            int startY = (int) ((y + 8f) / TILE_SIZE);
-            int targetX = (int) ((player.getX() + 8f) / TILE_SIZE);
-            int targetY = (int) ((player.getY() + 8f) / TILE_SIZE);
+            int startX = (int) ((x + 8f) / TILE_SIZE) - 1;
+            int startY = (int) ((y + 8f) / TILE_SIZE) - 1;
+            int targetX = (int) ((player.getX() + 8f) / TILE_SIZE) - 1;
+            int targetY = (int) ((player.getY() + 8f) / TILE_SIZE) - 1;
+            startX = MathUtils.clamp(startX, 0, Map.map.length - 1);
+            startY = MathUtils.clamp(startY, 0, Map.map[0].length - 1);
+            targetX = MathUtils.clamp(targetX, 0, Map.map.length - 1);
+            targetY = MathUtils.clamp(targetY, 0, Map.map[0].length - 1);
+
             int[] validTarget = nearestOpenTile(targetX, targetY);
             currentPath = PathFinder.findPath(
                 Map.map, startX, startY, validTarget[0], validTarget[1]
@@ -83,8 +89,9 @@ public class Enemy extends Entity {
 
         if (currentPath != null && currentWaypointIndex < currentPath.size()) {
             Vector2 waypoint = currentPath.get(currentWaypointIndex);
-            float targetWorldX = waypoint.x * TILE_SIZE;
-            float targetWorldY = waypoint.y * TILE_SIZE;
+            float targetWorldX = (waypoint.x + 1) * TILE_SIZE;
+            float targetWorldY = (waypoint.y + 1) * TILE_SIZE;
+
             moveTowards(targetWorldX, targetWorldY, deltaTime);
             if (Math.abs(x - targetWorldX) < 1f && Math.abs(y - targetWorldY) < 1f) {
                 currentWaypointIndex++;
@@ -143,14 +150,19 @@ public class Enemy extends Entity {
 
     private boolean pathNeedsRecalculation() {
         if (currentPath == null || currentWaypointIndex >= currentPath.size()) return true;
-        int playerGridX = (int) ((player.getX() + 8f) / TILE_SIZE);
-        int playerGridY = (int) ((player.getY() + 8f) / TILE_SIZE);
+        int playerGridX = (int) ((player.getX() + 8f) / TILE_SIZE) - 1;
+        int playerGridY = (int) ((player.getY() + 8f) / TILE_SIZE) - 1;
+
         if (playerGridX != lastKnownPlayerGridX || playerGridY != lastKnownPlayerGridY) {
             lastKnownPlayerGridX = playerGridX;
             lastKnownPlayerGridY = playerGridY;
             return true;
         }
         return false;
+    }
+
+    public void setLootAmount(int lootAmount) {
+        this.lootAmount = lootAmount;
     }
 
     public void takeDamage(int damage) {
@@ -215,4 +227,23 @@ public class Enemy extends Entity {
         experienceReward = Math.max(1, Math.round(experienceReward * rewardMultiplier));
         creditReward = Math.max(1, Math.round(creditReward * rewardMultiplier));
     }
+    public void dropLoot() {
+        for (int i = 0; i < lootAmount; i++) {
+            int chance = MathUtils.random(1, 100);
+
+            float scatterX = MathUtils.random(-12f, 12f);
+            float scatterY = MathUtils.random(-12f, 12f);
+
+            float dropX = this.x + (this.width / 2f) + scatterX;
+            float dropY = this.y + (this.height / 2f) + scatterY;
+
+            if (chance <= 60) {
+                Services.GameManager.coins.add(new Coin(dropX, dropY, new Texture("tiles\\coin.png")));
+            } else if (chance <= 65) {
+                Services.GameManager.hearts.add(new Heart(dropX, dropY, new Texture("tiles\\heart.png")));
+            }
+        }
+
+    }
+
 }

@@ -1,19 +1,25 @@
 package Services;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.MathUtils;
+import entities.Box;
+import entities.Chest;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Map {
-    public static final int SIZE = 63;
-
+    public static final int SIZE = 62;
     public static int[][] map = new int[SIZE][SIZE];
-
+    public static float barellChance=0.01f;
+    public static float chestChance=0.001f;
+    public static ArrayList<Chest> chests=new ArrayList<>();
+    public static ArrayList<Box> boxes=new ArrayList<>();
     public static void generateMap() {
         if (MathUtils.randomBoolean(0.5f))
             digers();
@@ -175,10 +181,9 @@ public class Map {
         TiledMapTile cornerBottomLeft = tileset.getTile(233);
 
 
-        for (int x = 1; x < SIZE; x++) {
-            for (int y = 1; y < SIZE; y++) {
-
-                TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                TiledMapTileLayer.Cell cell = layer.getCell(x+1, y+1);
                 if (cell == null) {
                     cell = new TiledMapTileLayer.Cell();
                 }
@@ -214,8 +219,27 @@ public class Map {
                         cell.setTile(roofTile);
                         break;
                 }
-                layer.setCell(x, y, cell);
+                layer.setCell(x+1, y+1, cell);
             }
         }
+        addProps();
     }
-}
+    public static void addProps(){
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                if (map[x][y]==0) {
+                    if (MathUtils.randomBoolean(chestChance)) {
+                        map[x][y]=1;
+                        Chest chest=new Chest((x+1)*16,(y+1)*16,new Texture("tiles\\Chests.png"));
+                        chests.add(chest);
+                    } else if (MathUtils.randomBoolean(barellChance)) {
+                        map[x][y]=1;
+                        Box box=new Box((x+1)*16,(y+1)*16,new Texture("tiles\\boxes.png"));
+                        boxes.add(box);
+                    }
+                }
+            }
+        }
+        }
+    }
+

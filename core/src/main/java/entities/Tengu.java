@@ -26,6 +26,7 @@ public class Tengu extends Enemy {
             42f,
             56f
         );
+        this.setLootAmount(5);
     }
 
     public boolean isYamabushi() {

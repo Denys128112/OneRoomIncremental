@@ -21,7 +21,7 @@ public class Main extends Game {
     private Skin skin;
     private GameStateStub gameState;
     private SkillTreeScreen skillTreeScreen;
-
+    private GameScreen gameScreen;
     @Override
     public void create() {
         skin = UiSkinFactory.create();
@@ -34,7 +34,8 @@ public class Main extends Game {
     }
 
     public void showGame() {
-        switchTo(new GameScreen(this));
+        if(gameScreen==null) gameScreen=new GameScreen(this);
+        switchTo(gameScreen);
     }
 
     public void showDifficultySelection() {
@@ -65,7 +66,7 @@ public class Main extends Game {
     private void switchTo(Screen next) {
         Screen previous = getScreen();
         setScreen(next);
-        if (previous != null && previous != skillTreeScreen) {
+        if (previous != null && previous != skillTreeScreen && previous != gameScreen) {
             previous.dispose();
         }
     }

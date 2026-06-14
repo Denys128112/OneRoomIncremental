@@ -123,13 +123,12 @@ public final class SpriteSheetAnimator implements Disposable {
         finished = false;
     }
 
-    public void draw(Batch batch, float entityX, float entityY, float entityWidth) {
+    public void draw(Batch batch, float entityX, float entityY, float entityWidth, float entityHeight) {
         int row = rowFor(direction);
         boolean mirror = direction == Direction.RIGHT && layout.rightRow < 0;
         TextureRegion frame = currentFrame(row);
-
         float drawX = Math.round(entityX + (entityWidth - renderWidth) * 0.5f);
-        float drawY = Math.round(entityY);
+        float drawY = Math.round(entityY + (entityHeight - renderHeight) * 0.5f);
         if (mirror) {
             batch.draw(frame, drawX + renderWidth, drawY, -renderWidth, renderHeight);
         } else {
