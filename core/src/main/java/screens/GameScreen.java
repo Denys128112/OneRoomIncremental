@@ -49,6 +49,8 @@ public class GameScreen extends BaseScreen {
     private InstructionsWindow instructionsWindow;
     private boolean instructionsOpen;
 
+    public static float mouseWorldX, mouseWorldY;
+
     public GameScreen(Main game) {
         super(game);
         state = game.getGameState();
@@ -159,6 +161,8 @@ public class GameScreen extends BaseScreen {
     private void updateAimAndInput() {
         mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
+        GameScreen.mouseWorldX = mousePos.x;
+        GameScreen.mouseWorldY = mousePos.y;
         gameManager.player.lookAt(mousePos.x, mousePos.y);
     }
 

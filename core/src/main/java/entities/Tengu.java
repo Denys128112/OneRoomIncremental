@@ -48,7 +48,7 @@ public class Tengu extends Enemy {
             updateAnimation(deltaTime, 0f, 0f);
             if (strikeCooldown <= 0f) {
                 playAttackAnimation();
-                player.takeDamage(attackDamage);
+                player.takeDamage(attackDamage, this);
                 strikeCooldown = attackCooldown;
             }
         }

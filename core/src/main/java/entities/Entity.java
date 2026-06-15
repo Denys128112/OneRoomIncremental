@@ -16,6 +16,10 @@ public abstract class Entity implements Disposable {
     protected float rotation = 0;
     private SpriteSheetAnimator animator;
 
+    private static com.badlogic.gdx.graphics.Texture whitePixelTex;
+    private float spriteRenderWidth;
+    private float spriteRenderHeight;
+
     public Entity(float x, float y, float width, float height, float speed, Color color) {
         this.x = x;
         this.y = y;
@@ -43,13 +47,30 @@ public abstract class Entity implements Disposable {
         return animator != null;
     }
 
-    protected void setAnimator(SpriteSheetAnimator animator) {
+    protected void setAnimator(SpriteSheetAnimator animator, float renderWidth, float renderHeight) {
         if (this.animator != null) this.animator.dispose();
         this.animator = animator;
+        this.spriteRenderWidth = renderWidth;
+        this.spriteRenderHeight = renderHeight;
+    }
+
+    protected void setAnimator(SpriteSheetAnimator animator) {
+        setAnimator(animator, width, height);
     }
 
     protected void updateAnimation(float deltaTime, float movementX, float movementY) {
         if (animator != null) animator.update(deltaTime, movementX, movementY);
+    }
+
+    protected static com.badlogic.gdx.graphics.Texture getWhitePixel() {
+        if (whitePixelTex == null) {
+            com.badlogic.gdx.graphics.Pixmap pm = new com.badlogic.gdx.graphics.Pixmap(1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+            pm.setColor(1, 1, 1, 1);
+            pm.fill();
+            whitePixelTex = new com.badlogic.gdx.graphics.Texture(pm);
+            pm.dispose();
+        }
+        return whitePixelTex;
     }
 
     protected void playAttackAnimation() {
@@ -86,6 +107,9 @@ public abstract class Entity implements Disposable {
     public float getRotation() {
         return rotation;
     }
+
+    public float getSpriteRenderWidth()  { return spriteRenderWidth; }
+    public float getSpriteRenderHeight() { return spriteRenderHeight; }
 
     @Override
     public void dispose() {

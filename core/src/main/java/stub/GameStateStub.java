@@ -17,6 +17,7 @@ public class GameStateStub {
     private BigDecimal credits = new BigDecimal("1250");
     private static int healthQuarters = 18;
     private int maxHealthQuarters = 24;
+    private static int maxHealthQuartersStatic = 24;
     private int experience = 35;
     private int experienceToNextLevel = 100;
     public static int wave = 1;
@@ -188,4 +189,9 @@ public class GameStateStub {
     public LevelManager getLevelManager() {
         return levelManager;
     }
+
+    public static int getHealthQuartersStatic() {return healthQuarters;}
+
+    public void addMaxHealthQuarters(int amount) {maxHealthQuarters += amount;}
+    public static int getMaxHealthQuartersStatic() {return maxHealthQuartersStatic;}
 }

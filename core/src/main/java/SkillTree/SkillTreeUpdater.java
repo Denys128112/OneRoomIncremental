@@ -2,6 +2,8 @@ package SkillTree;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import skills.PlayerSkills;
+import skills.PlayerSkillsHolder;
 
 public class SkillTreeUpdater {
 
@@ -32,13 +34,13 @@ public class SkillTreeUpdater {
         }
     }
 
-
     private void tryUnlock(Skill skill, Char owner) {
         if (skill.unlocked || !skill.available) return;
         skill.unlocked = true;
+        if (PlayerSkillsHolder.instance != null) PlayerSkillsHolder.instance.unlock(skill.id);
+
         for (Skill child : owner.skills) {
-            if (skill.id.equals(child.requiresId))
-                child.available = true;
+            if (skill.id.equals(child.requiresId)) child.available = true;
         }
     }
 }

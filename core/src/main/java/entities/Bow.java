@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import skills.PlayerSkills;
 
 public class Bow extends Weapon {
     private float chargeTime = 0f;
@@ -12,8 +13,14 @@ public class Bow extends Weapon {
     private int minDamage = 5;
     private int maxDamage = 75;
 
+    private PlayerSkills skills;
+
     public Bow(Player owner) {
         super(owner, 0.3f, 0);
+    }
+
+    public void setSkills(PlayerSkills skills) {
+        this.skills = skills;
     }
 
     @Override
@@ -35,13 +42,31 @@ public class Bow extends Weapon {
     @Override
     public void attack() {
         float chargePercent = chargeTime / maxCharge;
+        int baseDamage = minDamage + (int)((maxDamage - minDamage) * chargePercent);
 
-        int finalDamage = minDamage + (int)((maxDamage - minDamage) * chargePercent);
+        int boostedDamage;
+        if (skills != null) boostedDamage = skills.ranger.modifyBowDamage(baseDamage);
+        else boostedDamage = baseDamage;
 
         float startX = owner.getX() + owner.width / 2;
         float startY = owner.getY() + owner.height / 2;
 
-        GameManager.projectiles.add(new Projectile(startX, startY, owner.getRotation(), finalDamage, 1, false, Color.BROWN, false));
+        float angle;
+        if (skills != null) angle = skills.ranger.resolveArrowAngle(owner.getRotation(), startX, startY);
+        else angle = owner.getRotation();
+
+        boolean piercing;
+        if (skills != null) piercing = skills.ranger.isBowPiercing();
+        else piercing = false;
+
+        Projectile arrow = new Projectile(startX, startY, angle, boostedDamage, 1, false, Color.BROWN, false);
+        if (skills != null && skills.ranger.isBowPiercing()) {
+            arrow.maxHits = 2;
+        }
+        GameManager.projectiles.add(arrow);
+        if (skills != null) {
+            skills.ranger.fireCrossfire(startX, startY, angle, boostedDamage, piercing);
+        }
 
         chargeTime = 0f;
         cooldownTimer = attackCooldown;
