@@ -21,6 +21,7 @@ public class MainMenuScreen extends BaseScreen {
     public MainMenuScreen(Main game) {
         super(game);
         build();
+        Services.AudioManager.playMusic(Services.AudioManager.menuMusic);
     }
 
     private void build() {

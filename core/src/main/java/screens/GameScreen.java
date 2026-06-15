@@ -69,6 +69,8 @@ public class GameScreen extends BaseScreen {
         enemyTracker = new EnemyTrackerPanel(game.getSkin(), GameManager.enemies);
         stage.addActor(enemyTracker);
         addInstructionsButton();
+
+        checkMusic();
     }
 
     @Override
@@ -196,6 +198,7 @@ public class GameScreen extends BaseScreen {
             gameManager.startNewWave();
             currentState = ScreenState.FADING_IN;
             transitionTimer = 0f;
+            checkMusic();
         } else if (currentState == ScreenState.FADING_IN
             && transitionTimer >= TRANSITION_DURATION) {
             currentState = ScreenState.PLAYING;
@@ -275,6 +278,13 @@ public class GameScreen extends BaseScreen {
     }
 
 
+    private void checkMusic() {
+        if (GameStateStub.wave > 0 && GameStateStub.wave % 5 == 0) {
+            Services.AudioManager.playMusic(Services.AudioManager.bossMusic);
+        } else {
+            Services.AudioManager.playMusic(Services.AudioManager.battleMusic);
+        }
+    }
 
     @Override
     public void dispose() {
