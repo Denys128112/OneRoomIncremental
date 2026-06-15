@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import com.badlogic.gdx.math.Vector2;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class Gorgon extends Archer {
         EnemyAnimationFactory.attachLarge(
             this, "enemies/gorgon/gorgon-1-topdown.png", 42f, 56f
         );
+        this.setLootAmount(4);
     }
 
     @Override
@@ -31,6 +33,7 @@ public class Gorgon extends Archer {
         }
         if (petrifyTimer <= 0f) {
             playAttackAnimation();
+            AudioManager.playSound(AudioManager.enemyMagic);
             player.applyStun(0.7f);
             petrifyTimer = 6f;
         }

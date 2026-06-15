@@ -1,6 +1,7 @@
 package entities;
 
 import Services.GameManager;
+import Services.AudioManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -236,27 +237,24 @@ public class Player extends Entity {
     public void takeDamage(int damage, Enemy attacker) {
         if (skills != null && skills.tank.isInvulnerable()) return;
         if (skills != null && skills.warrior.consumeParry()) {
-            if (attacker != null) {
-                skills.warrior.applyParryKnockback(attacker, x + width / 2f, y + height / 2f);
-            }
+            if (attacker != null) skills.warrior.applyParryKnockback(attacker, x + width/2f, y + height/2f);
             return;
         }
-
-
         if (skills != null) {
             damage = skills.events.modifyIncomingDamage(damage);
             if (damage <= 0) return;
             skills.events.onDamageTaken();
         }
-
         if (skills != null && GameStateStub.getHealthQuartersStatic() <= GameStateStub.getMaxHealthQuartersStatic() / 2) {
             skills.events.onLowHealth();
         }
-
+        AudioManager.playSound(AudioManager.playerHurt);
         playHurtAnimation();
-        for (int i = 0; i < damage; i++) {
-            GameStateStub.damageOneQuarter();
-        }
+        for (int i = 0; i < damage; i++) GameStateStub.damageOneQuarter();
+    }
+
+    public void takeDamage(int damage) {
+        takeDamage(damage, null);
     }
 
     public void applyStun(float duration) {

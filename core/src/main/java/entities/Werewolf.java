@@ -22,6 +22,7 @@ public class Werewolf extends Enemy {
         EnemyAnimationFactory.attachLarge(
             this, "enemies/werewolf/black-werewolf-topdown.png", 42f, 56f
         );
+        this.setLootAmount(3);
     }
 
     @Override

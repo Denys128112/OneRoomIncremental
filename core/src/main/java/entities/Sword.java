@@ -1,6 +1,9 @@
 package entities;
 
+import Services.AudioManager;
+import Services.CollisionChecker;
 import Services.GameManager;
+import Services.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import skills.PlayerSkills;
@@ -29,6 +32,9 @@ public class Sword extends Weapon {
 
     @Override
     public void attack() {
+
+        AudioManager.playSound(AudioManager.weapSwordSwing);
+
         float px = owner.getX() + owner.width / 2;
         float py = owner.getY() + owner.height / 2;
         float angle = owner.getRotation();
@@ -45,6 +51,16 @@ public class Sword extends Weapon {
                 if (skills != null) {skills.warrior.onSwordHit(enemy, px, py, angle);}
                 int finalDamage = (skills != null) ? skills.warrior.modifySwordDamage(damage) : damage;
                 enemy.takeDamage(finalDamage);
+            }
+        }
+        Box box = null;
+        for (Box b : Map.boxes) {
+            float ex = b.getX() + b.width / 2;
+            float ey = b.getY() + b.height / 2;
+            float distance = (float) Math.hypot(ex - px, ey - py);
+            if (distance <= hitRadius) {
+                b.interact();
+                box = b;
             }
         }
         cooldownTimer = attackCooldown;

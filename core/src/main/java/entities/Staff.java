@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import Services.GameManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -80,6 +81,7 @@ public class Staff extends Weapon {
                 GameManager.projectiles.add(new Projectile(startX, startY, angle, 20, 2, false, null, false, greenSheet, 0, 3));
                 break;
         }
+        AudioManager.playSound(AudioManager.weapStaffCast);
         cooldownTimer = attackCooldown;
     }
 

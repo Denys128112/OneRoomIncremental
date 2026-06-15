@@ -1,6 +1,7 @@
 package Services;
 
 import com.badlogic.gdx.math.Rectangle;
+import entities.Chest;
 import entities.Entity;
 
 public class CollisionChecker {
@@ -15,10 +16,13 @@ public class CollisionChecker {
         int endY = (int) ((e1.bounds.y + e1.bounds.height) / 16f);
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
-                if (x < 1 || x >= Map.SIZE || y < 1 || y >= Map.SIZE) {
+                int mapX = x - 1;
+                int mapY = y - 1;
+                if (mapX < 0 || mapX >= Map.SIZE || mapY < 0 || mapY >= Map.SIZE) {
                     return true;
                 }
-                int tileId = Map.map[x][y];
+
+                int tileId = Map.map[mapX][mapY];
                 if (tileId != 0) {
                     float wallX = x * 16f;
                     float wallY = y * 16f;

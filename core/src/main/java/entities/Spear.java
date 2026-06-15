@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import Services.GameManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -27,6 +28,7 @@ public class Spear extends Weapon {
         float startY = owner.getY() + owner.height / 2;
 
         GameManager.projectiles.add(new Projectile(startX, startY, owner.getRotation(), damage, 3, true, Color.LIGHT_GRAY, false));
+        AudioManager.playSound(AudioManager.weapSpearThrow);
         cooldownTimer = attackCooldown;
     }
 }

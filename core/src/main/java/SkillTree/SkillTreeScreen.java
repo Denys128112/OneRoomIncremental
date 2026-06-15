@@ -34,17 +34,6 @@ public class SkillTreeScreen implements Screen {
         renderer.buildUI(classes, main::showGame);
     }
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0.04f, 0.06f, 0.12f, 1f);
-        Gdx.gl.glClear(com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            main.showGame();
-            return;
-        }
-        renderer.render(classes, null);
-    }
-
     private Char[] buildClasses(Char[] previous) {
         Map<String, Boolean> unlockedState = new HashMap<>();
         if (previous != null) {
@@ -91,6 +80,18 @@ public class SkillTreeScreen implements Screen {
         renderer.resize(width, height);
         classes = buildClasses(classes);
         renderer.buildUI(classes, main::showGame);
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0.04f, 0.06f, 0.12f, 1f);
+        Gdx.gl.glClear(com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Services.AudioManager.playSound(Services.AudioManager.uiClick);
+            main.showGame();
+            return;
+        }
+        renderer.render(classes, null);
     }
 
     @Override public void hide() {}

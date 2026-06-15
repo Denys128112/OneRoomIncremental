@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import Services.GameManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -67,6 +68,8 @@ public class Bow extends Weapon {
         if (skills != null) {
             skills.ranger.fireCrossfire(startX, startY, angle, boostedDamage, piercing);
         }
+
+        AudioManager.playSound(AudioManager.weapBowShoot);
 
         chargeTime = 0f;
         cooldownTimer = attackCooldown;

@@ -25,6 +25,7 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        AudioManager.load();
         skin = UiSkinFactory.create();
         gameState = new GameStateStub();
         showMainMenu();
@@ -72,7 +73,9 @@ public class Main extends Game {
     private void switchTo(Screen next) {
         Screen previous = getScreen();
         setScreen(next);
-        if (previous != null && previous != gameScreen && previous != skillTreeScreen) {previous.dispose();}
+        if (previous != null && previous != gameScreen && previous != skillTreeScreen) {
+            previous.dispose();
+        }
     }
 
     @Override
@@ -80,5 +83,6 @@ public class Main extends Game {
         super.dispose();
         skin.dispose();
         if (skillTreeScreen != null) skillTreeScreen.dispose();
+        AudioManager.dispose();
     }
 }

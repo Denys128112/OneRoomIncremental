@@ -40,7 +40,7 @@ public abstract class Entity implements Disposable {
     }
 
     public void render(Batch batch) {
-        if (animator != null) animator.draw(batch, x, y, width);
+        if (animator != null) animator.draw(batch, x, y, width,height);
     }
 
     public boolean hasSpriteAnimation() {
