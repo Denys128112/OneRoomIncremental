@@ -82,6 +82,7 @@ public class Box extends Entity {
     public void interact() {
         if (!isBreaking && !isBroken) {
             isBreaking = true;
+            Services.AudioManager.playSound(Services.AudioManager.envBoxBreak);
             stateTime = 0f;
 
             int gridX = (int) (x / 16f);

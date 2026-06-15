@@ -34,6 +34,9 @@ public class AudioManager {
     public static Sound sysLevelUp;
     public static Sound sysWaveClear;
 
+    public static Sound envChestOpen;
+    public static Sound envBoxBreak;
+
     public static void load() {
         menuMusic = Gdx.audio.newMusic(Gdx.files.internal("music/music_menu.mp3"));
         battleMusic = Gdx.audio.newMusic(Gdx.files.internal("music/music_battle.mp3"));
@@ -65,6 +68,9 @@ public class AudioManager {
         sysExp = Gdx.audio.newSound(Gdx.files.internal("sounds/sys_exp.ogg"));
         sysLevelUp = Gdx.audio.newSound(Gdx.files.internal("sounds/sys_level_up.ogg"));
         sysWaveClear = Gdx.audio.newSound(Gdx.files.internal("sounds/sys_wave_clear.ogg"));
+
+        envChestOpen = Gdx.audio.newSound(Gdx.files.internal("sounds/env_chest_open.ogg"));
+        envBoxBreak = Gdx.audio.newSound(Gdx.files.internal("sounds/env_box_break.ogg"));
     }
 
     public static void playMusic(Music musicToPlay) {
@@ -112,5 +118,8 @@ public class AudioManager {
         if (sysExp != null) sysExp.dispose();
         if (sysLevelUp != null) sysLevelUp.dispose();
         if (sysWaveClear != null) sysWaveClear.dispose();
+
+        if (envChestOpen != null) envChestOpen.dispose();
+        if (envBoxBreak != null) envBoxBreak.dispose();
     }
 }

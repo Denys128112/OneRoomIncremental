@@ -72,6 +72,7 @@ public class Chest extends Entity {
     public void interact() {
         if (!isOpening && !isOpen) {
             isOpening = true;
+            Services.AudioManager.playSound(Services.AudioManager.envChestOpen);
             stateTime = 0f;
         }
     }
