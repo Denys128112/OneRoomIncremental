@@ -87,35 +87,35 @@ final class EnemyUiInfo {
             return small(
                 "skeleton-mage", "Скелет-маг",
                 "Телепортується ближче до героя й атакує здалеку, але дає мало досвіду.",
-                "enemies/base/enemy-4-topdown.png"
+                "enemies/generated-small/skeleton-mage-topdown.png"
             );
         }
         if (enemy instanceof SkeletArcher) {
             return small(
                 "skeleton-archer", "Скелет-лучник",
                 "Тримає дистанцію та випускає снаряди в напрямку героя.",
-                "enemies/base/enemy-4-topdown.png"
+                "enemies/generated-small/skeleton-archer-topdown.png"
             );
         }
         if (enemy instanceof Necromant) {
             return small(
                 "necromancer", "Некромант",
                 "Уникає героя та повертає полеглих ворогів до бою.",
-                "enemies/base/enemy-4-topdown.png"
+                "enemies/generated-small/necromancer-topdown.png"
             );
         }
         if (enemy instanceof Shaman) {
             return small(
                 "shaman", "Шаман",
                 "Повільний витривалий ворог із дистанційною атакою.",
-                "enemies/base/enemy-4-topdown.png"
+                "enemies/generated-small/shaman-topdown.png"
             );
         }
         if (enemy instanceof SkeletSwordman) {
             return small(
                 "skeleton-swordsman", "Скелет-воїн",
                 "Повільно наближається та атакує героя в ближньому бою.",
-                "enemies/base/enemy-3-topdown.png"
+                "enemies/generated-small/skeleton-mage-topdown.png"
             );
         }
         if (enemy instanceof Goblin) {

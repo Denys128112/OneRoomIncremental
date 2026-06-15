@@ -22,7 +22,7 @@ public class Necromant extends Enemy {
         this.realPlayer = player;
         this.deadEnemies = deadEnemies;
         this.enemiesToAdd = enemiesToAdd;
-        EnemyAnimationFactory.attachSmall(this, "enemies/base/enemy-4-topdown.png");
+        EnemyAnimationFactory.attachSmall(this, "enemies/generated-small/necromancer-topdown.png");
         this.setLootAmount(3);
     }
 

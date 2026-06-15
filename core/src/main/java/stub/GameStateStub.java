@@ -21,7 +21,7 @@ public class GameStateStub {
     private static int maxHealthQuartersStatic = 24;
     private int experience = 35;
     private int experienceToNextLevel = 100;
-    public static int wave = 1;
+    public static int wave = 6;
     private float waveSeconds;
     private boolean soundEnabled = true;
     private float musicVolume = 0.45f;
@@ -99,7 +99,7 @@ public class GameStateStub {
         credits = BigDecimal.ZERO;
         healthQuarters = maxHealthQuarters;
         experience = 0;
-        wave = 1;
+        wave = 6;
         waveSeconds = 0f;
         for (UpgradeStub upgrade : upgrades) {
             upgrade.reset();

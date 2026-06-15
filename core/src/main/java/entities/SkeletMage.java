@@ -11,7 +11,7 @@ public class SkeletMage extends Archer {
     private float teleportTimer = teleportCooldown;
     public SkeletMage(float x, float y, Player player, List<Projectile> projectileList) {
         super(x, y, player, 80f, 110, 1, 1f, 0.5f, projectileList);
-        EnemyAnimationFactory.attachSmall(this, "enemies/base/enemy-4-topdown.png");
+        EnemyAnimationFactory.attachSmall(this, "enemies/generated-small/skeleton-mage-topdown.png");
         this.setLootAmount(3);
     }
 

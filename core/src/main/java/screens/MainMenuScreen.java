@@ -41,21 +41,42 @@ public class MainMenuScreen extends BaseScreen {
         Table root = new Table();
         screen.add(root);
 
+        // 1. КОНТЕЙНЕР ЛОГОТИПУ
         Stack logo = new Stack();
         logo.add(new Image(game.getSkin().getDrawable("logo-frame")));
+
         Table titleLayer = new Table();
+        titleLayer.top().padTop(90f); // Фіксуємо верхні написи трохи вище центру
+
         Label title = new Label("ОДИН В КІМНАТІ", game.getSkin(), "title");
         title.setAlignment(Align.center);
         title.setWrap(true);
+
         Label subtitle = new Label("ІНКРЕМЕНТАЛЬНА ГРА", game.getSkin(), "heading");
         subtitle.setColor(Color.BLUE);
         subtitle.setAlignment(Align.center);
         subtitle.setWrap(true);
-        titleLayer.add(title).width(860f).row();
-        titleLayer.add(subtitle).width(860f).padTop(20f);
+
+        // Наш напис розробників
+        Label credits = new Label("Розробники: Самойлич Софія, Колісник Денис, Коротков Андрій, Топчий Віолетта", game.getSkin(), "small");
+        credits.setColor(Color.LIGHT_GRAY);
+        credits.setAlignment(Align.center);
+        credits.setWrap(true);
+        credits.setFontScale(1f); // Акуратний розмір, щоб ідеально вписатися в нижнє звуження
+
+        // Збираємо таблицю
+        titleLayer.add(title).width(900f).row();
+        titleLayer.add(subtitle).width(860f).padTop(30f).row();
+
+        // Великий відступ padTop(60f) штовхає цей рядок вниз, прямо у намальовану ручкою зону трапеції
+        titleLayer.add(credits).width(860f).padTop(35f);
+
         logo.add(titleLayer);
+
+        // Тримаємо базові розміри рамки, щоб вона не деформувалася
         root.add(logo).width(970f).height(320f).padBottom(24f).row();
 
+        // 2. КНОПКИ МЕНЮ
         addButton(root, "ПОЧАТИ ГРУ", game::showDifficultySelection);
         addButton(root, "ІНСТРУКЦІЯ", () ->
             new InstructionsWindow(
@@ -67,8 +88,6 @@ public class MainMenuScreen extends BaseScreen {
         addButton(root, "НАЛАШТУВАННЯ", () ->
             new SettingsWindow(game.getSkin(), game.getGameState(), () -> { }).showCentered(stage));
         addButton(root, "ВИХІД", Gdx.app::exit);
-        root.add(new Label("SCI-FI АРЕНА-РОГАЛИК // ПРОТОТИП UI", game.getSkin(), "small"))
-            .padTop(30f);
     }
 
     private void addButton(Table root, String text, Runnable action) {

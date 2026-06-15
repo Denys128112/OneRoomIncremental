@@ -14,6 +14,7 @@ public class SkillTreeScreen implements Screen {
 
     public SkillTreeScreen(Main main) {
         this.main = main;
+        // Передаємо GameState до рендерера
         renderer = new SkillTreeRenderer(main.getSkin(), main.getGameState());
         classes = buildClasses(null);
         renderer.buildUI(classes, main::showGame);
@@ -23,6 +24,20 @@ public class SkillTreeScreen implements Screen {
     public void show() {
         Gdx.input.setInputProcessor(renderer.getStage());
         renderer.buildUI(classes, main::showGame);
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0.04f, 0.06f, 0.12f, 1f);
+        Gdx.gl.glClear(com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT);
+
+        // Повернення на арену і по клавіші ESC, і по клавіші F
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            Services.AudioManager.playSound(Services.AudioManager.uiClick);
+            main.showGame();
+            return;
+        }
+        renderer.render(classes, null);
     }
 
     private Char[] buildClasses(Char[] previous) {
@@ -50,6 +65,8 @@ public class SkillTreeScreen implements Screen {
             Ranger.build(margin + step * 3,  screenH, scale),
             Tank.build(margin + step * 4,    screenH, scale),
         };
+
+        // Вираховуємо та призначаємо ціни навичкам залежно від їхньої глибини в гілці
         assignCosts(newClasses);
 
         for (Char c : newClasses) {
@@ -67,20 +84,12 @@ public class SkillTreeScreen implements Screen {
         return newClasses;
     }
 
-    public boolean areAllSkillsUnlocked() {
-        for (Char c : classes) {
-            for (Skill skill : c.skills) {
-                if (!skill.unlocked) return false;
-            }
-        }
-        return true;
-    }
-
     private void assignCosts(Char[] classes) {
         for (int classIndex = 0; classIndex < classes.length; classIndex++) {
             for (Skill skill : classes[classIndex].skills) {
                 int depth = depthOf(classes[classIndex].skills, skill);
-                skill.setCost(60 + classIndex * 20 + depth * 90);
+                // Базовий динамічний розрахунок ціни
+                skill.setCost(50 + classIndex * 15 + depth * 75);
             }
         }
     }
@@ -109,18 +118,6 @@ public class SkillTreeScreen implements Screen {
         renderer.buildUI(classes, main::showGame);
     }
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0.04f, 0.06f, 0.12f, 1f);
-        Gdx.gl.glClear(com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            Services.AudioManager.playSound(Services.AudioManager.uiClick);
-            main.showGame();
-            return;
-        }
-        renderer.render(classes, null);
-    }
-
     @Override public void hide() {}
     @Override public void pause() {}
     @Override public void resume() {}
@@ -128,6 +125,22 @@ public class SkillTreeScreen implements Screen {
     @Override
     public void dispose() {
         renderer.dispose();
-        for (Char c : classes) c.dispose();
+        if (classes != null) {
+            for (Char c : classes) c.dispose();
+        }
+    }
+
+    /**
+     * Реальний підрахунок для фінальної сцени гри.
+     * Повертає true, якщо абсолютно кожен вузол у кожному класі вивчено.
+     */
+    public boolean areAllSkillsUnlocked() {
+        if (classes == null) return false;
+        for (Char c : classes) {
+            for (Skill skill : c.skills) {
+                if (!skill.unlocked) return false;
+            }
+        }
+        return true;
     }
 }
