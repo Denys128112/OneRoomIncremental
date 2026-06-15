@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -105,6 +106,9 @@ public class Player extends Entity {
     }
 
     public void takeDamage(int damage) {
+
+        AudioManager.playSound(AudioManager.playerHurt);
+
         playHurtAnimation();
         for (int i = 0; i < damage; i++) {
             GameStateStub.damageOneQuarter();

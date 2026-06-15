@@ -69,7 +69,10 @@ public class SkillTreeScreen implements Screen{
     }
 
     public void render(float delta) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) main.showGame();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Services.AudioManager.playSound(Services.AudioManager.uiClick);
+            main.showGame();
+        }
         updater.update(classes);
         renderer.render(classes, updater.getHoveredSkill());
     }

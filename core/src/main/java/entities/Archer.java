@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -49,6 +50,7 @@ public class Archer extends Enemy {
         float startX = this.x + this.width / 2;
         float startY = this.y + this.height / 2;
         Projectile arrow = new Projectile(startX, startY, this.rotation, this.attackDamage, 1, false, Color.RED, true);
+        AudioManager.playSound(AudioManager.enemyShoot);
         projectileList.add(arrow);
     }
 }

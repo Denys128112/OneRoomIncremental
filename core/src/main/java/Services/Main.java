@@ -24,6 +24,7 @@ public class Main extends Game {
     private GameScreen gameScreen;
     @Override
     public void create() {
+        AudioManager.load();
         skin = UiSkinFactory.create();
         gameState = new GameStateStub();
         showMainMenu();
@@ -75,5 +76,6 @@ public class Main extends Game {
     public void dispose() {
         super.dispose();
         skin.dispose();
+        AudioManager.dispose();
     }
 }

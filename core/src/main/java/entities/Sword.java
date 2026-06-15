@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import Services.CollisionChecker;
 import Services.GameManager;
 import Services.Map;
@@ -25,6 +26,9 @@ public class Sword extends Weapon {
 
     @Override
     public void attack() {
+
+        AudioManager.playSound(AudioManager.weapSwordSwing);
+
         float px = owner.getX() + owner.width / 2;
         float py = owner.getY() + owner.height / 2;
 

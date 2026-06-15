@@ -56,6 +56,7 @@ public class GameManager {
             if (enemy.isReadyForRemoval()) {
                 state.addExperience(enemy.getExperienceReward());
                 enemy.dropLoot();
+                AudioManager.playSound(AudioManager.sysCoin);
                 deadEnemies.add(enemy);
                 enemyIterator.remove();
             }
@@ -66,6 +67,7 @@ public class GameManager {
             enemiesToAdd.clear();
         }
         if (enemies.isEmpty()) {
+            AudioManager.playSound(AudioManager.sysWaveClear);
             isWaveCleared = true;
         }
     }

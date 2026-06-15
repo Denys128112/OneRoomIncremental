@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import Services.Map;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -32,6 +33,7 @@ public class Kitsune extends Archer {
     }
 
     private void createIllusionVolley() {
+        AudioManager.playSound(AudioManager.enemyMagic);
         playAttackAnimation();
         float angle = MathUtils.atan2(player.getY() - y, player.getX() - x)
             * MathUtils.radiansToDegrees;

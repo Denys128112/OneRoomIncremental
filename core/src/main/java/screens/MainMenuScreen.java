@@ -1,5 +1,6 @@
 package screens;
 
+import Services.AudioManager;
 import Services.Main;
 import com.badlogic.gdx.graphics.Color;
 import ui.SettingsWindow;
@@ -74,12 +75,24 @@ public class MainMenuScreen extends BaseScreen {
         button.getLabel().setAlignment(Align.center);
         button.getLabel().setWrap(true);
         button.getLabel().setFontScale(0.9f);
+
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                AudioManager.playSound(AudioManager.uiClick);
                 action.run();
             }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, com.badlogic.gdx.scenes.scene2d.Actor fromActor) {
+                super.enter(event, x, y, pointer, fromActor);
+                if (pointer == -1) {
+                    AudioManager.playSound(AudioManager.uiHover);
+                }
+            }
         });
+
         root.add(button).width(480f).height(82f).pad(9f).row();
     }
+
 }

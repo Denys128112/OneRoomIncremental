@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import Services.GameManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -42,6 +43,8 @@ public class Bow extends Weapon {
         float startY = owner.getY() + owner.height / 2;
 
         GameManager.projectiles.add(new Projectile(startX, startY, owner.getRotation(), finalDamage, 1, false, Color.BROWN, false));
+
+        AudioManager.playSound(AudioManager.weapBowShoot);
 
         chargeTime = 0f;
         cooldownTimer = attackCooldown;

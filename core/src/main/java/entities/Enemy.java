@@ -1,5 +1,6 @@
 package entities;
 
+import Services.AudioManager;
 import Services.Map;
 import Services.PathFinder;
 import com.badlogic.gdx.graphics.Color;
@@ -174,6 +175,13 @@ public class Enemy extends Entity {
         } else {
             playHurtAnimation();
         }
+
+        if (hp - damage <= 0) {
+            AudioManager.playSound(AudioManager.enemyDeath);
+        } else {
+            AudioManager.playSound(AudioManager.enemyHurtMonster);
+        }
+
     }
 
     public int getHp() {
