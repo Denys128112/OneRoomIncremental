@@ -2,6 +2,8 @@ package SkillTree;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import skills.PlayerSkills;
+import skills.PlayerSkillsHolder;
 import Services.AudioManager;
 
 public class SkillTreeUpdater {
@@ -52,11 +54,11 @@ public class SkillTreeUpdater {
         }
 
         skill.unlocked = true;
+        if (PlayerSkillsHolder.instance != null) PlayerSkillsHolder.instance.unlock(skill.id);
         AudioManager.playSound(AudioManager.uiUpgrade);
 
         for (Skill child : owner.skills) {
-            if (skill.id.equals(child.requiresId))
-                child.available = true;
+            if (skill.id.equals(child.requiresId)) child.available = true;
         }
     }
 }

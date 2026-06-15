@@ -39,7 +39,7 @@ public class SwordMan extends Enemy {
         attackTimer -= deltaTime;
         if (bounds.overlaps(player.bounds) && attackTimer <= 0f) {
             playAttackAnimation();
-            player.takeDamage(attackDamage);
+            player.takeDamage(attackDamage, this);
             attackTimer = attackCooldown;
         }
     }

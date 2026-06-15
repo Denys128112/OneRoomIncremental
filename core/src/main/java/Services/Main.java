@@ -22,6 +22,7 @@ public class Main extends Game {
     private GameStateStub gameState;
     private SkillTreeScreen skillTreeScreen;
     private GameScreen gameScreen;
+
     @Override
     public void create() {
         AudioManager.load();
@@ -31,11 +32,13 @@ public class Main extends Game {
     }
 
     public void showMainMenu() {
+        gameScreen = null;
+        skillTreeScreen = null;
         switchTo(new MainMenuScreen(this));
     }
 
     public void showGame() {
-        if(gameScreen==null) gameScreen=new GameScreen(this);
+        if (gameScreen == null) gameScreen = new GameScreen(this);
         switchTo(gameScreen);
     }
 
@@ -45,6 +48,8 @@ public class Main extends Game {
 
     public void startGame(DifficultyLevel difficulty) {
         gameState.startNewRun(difficulty);
+        gameScreen = null;
+        skillTreeScreen = null;
         showGame();
     }
 
@@ -56,6 +61,7 @@ public class Main extends Game {
         if (skillTreeScreen == null) skillTreeScreen = new SkillTreeScreen(this);
         switchTo(skillTreeScreen);
     }
+
     public Skin getSkin() {
         return skin;
     }
@@ -67,7 +73,7 @@ public class Main extends Game {
     private void switchTo(Screen next) {
         Screen previous = getScreen();
         setScreen(next);
-        if (previous != null && previous != skillTreeScreen && previous != gameScreen) {
+        if (previous != null && previous != gameScreen && previous != skillTreeScreen) {
             previous.dispose();
         }
     }
@@ -76,6 +82,7 @@ public class Main extends Game {
     public void dispose() {
         super.dispose();
         skin.dispose();
+        if (skillTreeScreen != null) skillTreeScreen.dispose();
         AudioManager.dispose();
     }
 }

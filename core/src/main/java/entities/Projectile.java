@@ -15,6 +15,16 @@ public class Projectile extends Entity {
     public boolean isEnemyProjectile;
     public List<Enemy> hitEnemies;
 
+    public int ricochetCount = 0;
+    public static final int MAX_RICOCHET = 2;
+    public float travelDistance = 0f;
+    public int maxHits = 1;
+
+    private com.badlogic.gdx.graphics.g2d.TextureRegion[] animFrames;
+    private int animFrameCount = 1;
+    private float animTimer = 0f;
+    private static final float ANIM_FRAME_TIME = 0.08f;
+
     private int type;
 
     public Projectile(float x, float y, float angle, int damage, int type, boolean isPiercing, Color color, boolean isEnemyProjectile) {
@@ -41,19 +51,37 @@ public class Projectile extends Entity {
         this.dy = MathUtils.sinDeg(angle);
     }
 
+    public Projectile(float x, float y, float angle, int damage, int type, boolean isPiercing, Color color, boolean isEnemyProjectile, com.badlogic.gdx.graphics.Texture spriteSheet, int sheetRow, int frameCount) {
+        this(x, y, angle, damage, type, isPiercing, color, isEnemyProjectile);
+        com.badlogic.gdx.graphics.g2d.TextureRegion[][] all = com.badlogic.gdx.graphics.g2d.TextureRegion.split(spriteSheet, 16, 16);
+        animFrames = new com.badlogic.gdx.graphics.g2d.TextureRegion[frameCount];
+        for (int i = 0; i < frameCount; i++)
+            animFrames[i] = all[sheetRow][i];
+        animFrameCount = frameCount;
+    }
+
     public int getDamage() {
         return damage;
     }
 
     @Override
     public void update(float deltaTime) {
-        x += dx * speed * deltaTime;
-        y += dy * speed * deltaTime;
+        float moveX = dx * speed * deltaTime;
+        float moveY = dy * speed * deltaTime;
+        x += moveX;
+        y += moveY;
+
+        travelDistance += Math.sqrt(moveX * moveX + moveY * moveY);
         bounds.setPosition(x - width/2, y - height/2);
+
+        if (animFrames != null) {
+            animTimer += deltaTime;
+        }
     }
 
     @Override
     public void render(ShapeRenderer shapeRenderer) {
+        if (animFrames != null) return;
         shapeRenderer.setColor(color);
         if (type == 2) {
             shapeRenderer.circle(x, y, width / 2);
@@ -61,4 +89,24 @@ public class Projectile extends Entity {
             shapeRenderer.rect(x - width/2, y - height/2, width / 2, height / 2, width, height, 1f, 1f, rotation);
         }
     }
+
+    public void render(com.badlogic.gdx.graphics.g2d.Batch batch) {
+        if (animFrames == null) return;
+        int idx = (int)(animTimer / ANIM_FRAME_TIME) % animFrameCount;
+        com.badlogic.gdx.graphics.g2d.TextureRegion frame = animFrames[idx];
+        float drawSize = 24f;
+        batch.draw(frame,
+            x - drawSize / 2f, y - drawSize / 2f,
+            drawSize / 2f, drawSize / 2f,
+            drawSize, drawSize,
+            1f, 1f,
+            rotation);
+    }
+
+    public boolean hasSprite() { return animFrames != null; }
+
+    public void reflectX() { dx = -dx; }
+    public void reflectY() { dy = -dy; }
+    public float getDx() { return dx; }
+    public float getDy() { return dy; }
 }

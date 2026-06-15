@@ -13,76 +13,81 @@ public class Ranger {
         float sharedX = headerX;
 
         Skill[] skills = {
-            new Skill("bow_basic", "Wooden Bow",
-                "Basic bow. Longer charge = more damage.",
+            new Skill("bow_basic", "Дерев'яний Лук",
+                "Базовий лук. Чим довше тримаєш кнопку — тим більше шкоди (до +15%).",
                 new Texture("skillTree/hitRange.png"),
                 bowX, startY, null),
 
-            new Skill("bow_iron", "Iron Bow",
-                "More base damage and range.",
+            new Skill("bow_iron", "Залізний Лук",
+                "Базова шкода +5%, дальність стрільби +20%.",
                 new Texture("skillTree/Sniper.png"),
                 bowX, startY - step, "bow_basic"),
 
-            new Skill("bow_enchanted", "Enchanted Bow",
-                "Arrows have auto-aim on the nearest enemy.",
+            new Skill("bow_enchanted", "Зачарований Лук",
+                "Стріли автоматично наводяться на найближчого ворога.",
                 new Texture("skillTree/Sniper.png"),
                 bowX, startY - step * 2, "bow_iron"),
 
-            new Skill("bow_explosive", "Explosive Bow",
-                "Arrows explode on impact — AoE damage and burning effect.",
+            new Skill("bow_explosive", "Вибуховий Лук",
+                "Стріли вибухають при влучанні: шкода по площі +урон. Шкода луку +10%.",
                 new Texture("skillTree/BurstingArrow.png"),
                 bowX, startY - step * 3, "bow_enchanted"),
 
-            new Skill("piercing", "Piercing Shot",
-                "Arrows pierce through 1 enemy. Upgrade: pierce infinite enemies.",
+            new Skill("piercing", "Пробивний Постріл",
+                "Стріла пронизує першого ворога і вражає другого з тією ж силою, після чого зникає.",
                 new Texture("skillTree/PiercingShot.png"),
                 bowX, startY - step * 4, "bow_explosive"),
 
-            new Skill("cryo_arrows", "Cryo Arrows",
-                "15% chance to freeze an enemy for 2 seconds on hit.",
+            new Skill("cryo_arrows", "Кріо-Стріли",
+                "15% шанс заморозити ворога на 2 секунди при кожному влучанні стрілою.",
                 new Texture("skillTree/Freezing.png"),
                 bowX, startY - step * 5, "piercing"),
 
-            new Skill("ricochet", "Ricochet",
-                "Bullets bounce off walls.",
+            new Skill("ricochet", "Рикошет",
+                "Кулі відбиваються від стін до 2 разів. Якщо після відбиття влучає у ворога — рикошет зупиняється.",
                 new Texture("skillTree/Ricochet.png"),
                 sharedX, startY - step, null),
 
-            new Skill("bullet_destroy", "Bullet Breaker",
-                "Your bullets can destroy enemy projectiles.",
+            new Skill("bullet_destroy", "Знищувач Куль",
+                "Твої кулі знищують ворожі снаряди при зіткненні — обидва снаряди зникають.",
                 new Texture("skillTree/BulletBreaker.png"),
                 sharedX, startY - step * 2, "ricochet"),
 
-            new Skill("crossfire", "Crossfire",
-                "Also fires one projectile behind the player. Upgrade: fire in all 4 directions.",
+            new Skill("crossfire", "Перехресний Вогонь",
+                "При кожному пострілі додатково випускає снаряд позаду гравця.",
                 new Texture("skillTree/Crossfire.png"),
                 sharedX, startY - step * 3, "bullet_destroy"),
 
-            new Skill("pistol1", "Pistol MK-1",
-                "Very low damage but extremely high fire rate.",
+            new Skill("crossfire2", "Перехресний Вогонь II",
+                "Додатково випускає снаряди ліворуч і праворуч. Разом — 4 напрямки.",
+                new Texture("skillTree/Crossfire.png"),
+                sharedX, startY - step * 4, "crossfire"),
+
+            new Skill("pistol1", "Пістолет МК-1",
+                "Дуже мала шкода але надзвичайно висока швидкострільність.",
                 new Texture("skillTree/poison.png"),
                 pistolX, startY, null),
 
-            new Skill("pistol2", "Pistol MK-2",
-                "More damage, knocks back enemies. Lower fire rate.",
+            new Skill("pistol2", "Пістолет МК-2",
+                "Більше шкоди, відкидає ворогів назад. Дещо нижча швидкострільність.",
                 new Texture("skillTree/poison.png"),
                 pistolX, startY - step, "pistol1"),
 
-            new Skill("pistol3", "Pistol MK-3",
-                "Fires multiple projectiles in a cone.",
+            new Skill("pistol3", "Пістолет МК-3",
+                "Випускає 3 снаряди конусом одночасно.",
                 new Texture("skillTree/DoubleShot.png"),
                 pistolX, startY - step * 2, "pistol2"),
 
-            new Skill("pistol4", "Pistol MK-4",
-                "Multiple projectiles with auto-aim.",
+            new Skill("pistol4", "Пістолет МК-4",
+                "3 снаряди конусом з автонаведенням на найближчого ворога.",
                 new Texture("skillTree/DoubleShot.png"),
                 pistolX, startY - step * 3, "pistol3"),
 
-            new Skill("turret", "Auto Turret",
-                "Deploy a turret with auto-aim. Increases fire rate.",
+            new Skill("turret", "Авто-Турель",
+                "Розгортає турель біля курсору. Автонаведення на ворогів. Відкат: 30 сек. Використати: G.",
                 new Texture("skillTree/showerofarrows.png"),
                 pistolX, startY - step * 4, "pistol4"),
         };
-        return new Char("RANGER", "skillTree/ranger.png", headerX, cy, skills, false);
+        return new Char("ЛУЧНИК", "skillTree/ranger.png", headerX, cy, skills, false);
     }
 }

@@ -15,7 +15,7 @@ final class EnemyAnimationFactory {
             32f,
             32f,
             SpriteSheetLayout.threeDirectionsMirrored()
-        ));
+        ), 32f, 32f);
     }
 
     static void attachLarge(Enemy enemy, String texturePath, float width, float height) {
@@ -26,6 +26,6 @@ final class EnemyAnimationFactory {
             width,
             height,
             SpriteSheetLayout.fourDirections()
-        ));
+        ), width, height);
     }
 }

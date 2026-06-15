@@ -5,13 +5,14 @@ import Services.Map;
 import Services.PathFinder;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import java.util.List;
 
 public class Enemy extends Entity {
     private static final float TILE_SIZE = 16f;
-
     protected Player player;
     protected int attackDamage;
     protected float attackCooldown;
@@ -25,7 +26,22 @@ public class Enemy extends Entity {
     private int maxHp;
     private int experienceReward;
     private int creditReward;
+
+    private float stunTimer = 0f;
+    private boolean frozenVisual = false;
+    private float freezeAnimTimer = 0f;
+
+    private float burnTimer = 0f;
+    private float burnTickTimer = 0f;
+    private int burnDamage = 0;
+    private float burnAnimTimer = 0f;
+    private static final float BURN_TICK = 1f;
+
+    private static Texture burnTexture;
+    private static Texture freezeTexture;
+
     protected int lootAmount=1;
+
     public Enemy(
         float x,
         float y,
@@ -69,6 +85,32 @@ public class Enemy extends Entity {
             return;
         }
 
+        if (stunTimer > 0f) {
+            stunTimer -= deltaTime;
+            frozenVisual = stunTimer > 0f;
+            freezeAnimTimer += deltaTime;
+            updateAnimation(deltaTime, 0f, 0f);
+            return;
+        } else if (!frozenVisual) freezeAnimTimer = 0f;
+
+        if (burnTimer > 0f) {
+            burnTimer -= deltaTime;
+            burnTickTimer -= deltaTime;
+
+            burnAnimTimer += deltaTime;
+
+            if (burnTickTimer <= 0f) {
+                burnTickTimer = BURN_TICK;
+                hp = Math.max(1, hp - burnDamage);
+                playHurtAnimation();
+            }
+
+            if (burnTimer <= 0f) {
+                burnDamage = 0;
+                burnAnimTimer = 0f;
+            }
+        }
+
         float previousX = x;
         float previousY = y;
         if (pathNeedsRecalculation()) {
@@ -100,6 +142,16 @@ public class Enemy extends Entity {
         }
 
         bounds.setPosition(x, y);
+        for (com.badlogic.gdx.math.Rectangle wall : Services.GameManager.temporaryWalls) {
+            if (bounds.overlaps(wall)) {
+                x = previousX;
+                y = previousY;
+                bounds.setPosition(x, y);
+                currentPath = null;
+                break;
+            }
+        }
+
         updateAnimation(deltaTime, x - previousX, y - previousY);
     }
 
@@ -222,6 +274,20 @@ public class Enemy extends Entity {
         return creditReward;
     }
 
+    public void applyStun(float duration) {stunTimer = Math.max(stunTimer, duration);}
+    public boolean isStunned() {return stunTimer > 0f;}
+
+    public void applyBurn(float duration, int damagePerTick) {
+        burnTimer = Math.max(burnTimer, duration);
+        burnDamage = Math.max(burnDamage, damagePerTick);
+        burnTickTimer = BURN_TICK;
+    }
+
+    public static void loadStatusTextures(Texture burnTex, Texture freezeTex) {
+        burnTexture  = burnTex;
+        freezeTexture = freezeTex;
+    }
+
     public void applyDifficulty(
         float healthMultiplier,
         float speedMultiplier,
@@ -234,6 +300,33 @@ public class Enemy extends Entity {
         attackDamage = Math.max(1, Math.round(attackDamage * damageMultiplier));
         experienceReward = Math.max(1, Math.round(experienceReward * rewardMultiplier));
         creditReward = Math.max(1, Math.round(creditReward * rewardMultiplier));
+    }
+
+    public void render(com.badlogic.gdx.graphics.glutils.ShapeRenderer shapeRenderer) {
+        super.render(shapeRenderer);
+    }
+
+    public void renderEffects(Batch batch) {
+        boolean burning = burnTimer  > 0f;
+        boolean frozen  = frozenVisual;
+        if (!burning && !frozen) return;
+
+        float blinkPeriod = 0.25f;
+        float blinkPhase  = (burning ? burnAnimTimer : freezeAnimTimer) % blinkPeriod;
+        if (blinkPhase > 0.15f) return;
+
+        float cx   = x + width  * 0.5f;
+        float cy   = y + height * 0.5f;
+        float half = 10f;
+
+        batch.setColor(1f, 1f, 1f, 1f);
+        if (burning && burnTexture != null) {
+            batch.draw(burnTexture, cx - half, cy - half, half * 2, half * 2);
+        }
+        if (frozen && freezeTexture != null) {
+            batch.draw(freezeTexture, cx - half, cy - half, half * 2, half * 2);
+        }
+        batch.setColor(1f, 1f, 1f, 1f);
     }
     public void dropLoot() {
         for (int i = 0; i < lootAmount; i++) {
@@ -253,5 +346,4 @@ public class Enemy extends Entity {
         }
 
     }
-
 }
