@@ -4,15 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import Services.Main;
 import com.badlogic.gdx.Screen;
-
-import java.util.HashMap;
-import java.util.Map;
-
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import Services.Main;
-import com.badlogic.gdx.Screen;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +14,7 @@ public class SkillTreeScreen implements Screen {
 
     public SkillTreeScreen(Main main) {
         this.main = main;
-        renderer = new SkillTreeRenderer(main.getSkin());
+        renderer = new SkillTreeRenderer(main.getSkin(), main.getGameState());
         classes = buildClasses(null);
         renderer.buildUI(classes, main::showGame);
     }
@@ -59,6 +50,7 @@ public class SkillTreeScreen implements Screen {
             Ranger.build(margin + step * 3,  screenH, scale),
             Tank.build(margin + step * 4,    screenH, scale),
         };
+        assignCosts(newClasses);
 
         for (Char c : newClasses) {
             for (Skill skill : c.skills) {
@@ -73,6 +65,41 @@ public class SkillTreeScreen implements Screen {
             }
         }
         return newClasses;
+    }
+
+    public boolean areAllSkillsUnlocked() {
+        for (Char c : classes) {
+            for (Skill skill : c.skills) {
+                if (!skill.unlocked) return false;
+            }
+        }
+        return true;
+    }
+
+    private void assignCosts(Char[] classes) {
+        for (int classIndex = 0; classIndex < classes.length; classIndex++) {
+            for (Skill skill : classes[classIndex].skills) {
+                int depth = depthOf(classes[classIndex].skills, skill);
+                skill.setCost(60 + classIndex * 20 + depth * 90);
+            }
+        }
+    }
+
+    private int depthOf(Skill[] skills, Skill skill) {
+        int depth = 0;
+        String required = skill.requiresId;
+        while (required != null) {
+            depth++;
+            String next = null;
+            for (Skill candidate : skills) {
+                if (required.equals(candidate.id)) {
+                    next = candidate.requiresId;
+                    break;
+                }
+            }
+            required = next;
+        }
+        return depth;
     }
 
     @Override

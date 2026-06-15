@@ -17,6 +17,7 @@ import stub.GameStateStub;
 import ui.GameHUD;
 import ui.EnemyTrackerPanel;
 import ui.InstructionsWindow;
+import ui.RunResultWindow;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -48,6 +49,7 @@ public class GameScreen extends BaseScreen {
     private ScreenState currentState = ScreenState.PLAYING;
     private InstructionsWindow instructionsWindow;
     private boolean instructionsOpen;
+    private boolean resultOpen;
 
     public static float mouseWorldX, mouseWorldY;
 
@@ -91,6 +93,20 @@ public class GameScreen extends BaseScreen {
 
         if (!isOverlayOpen() && currentState == ScreenState.PLAYING) {
             gameManager.update(delta);
+            if (state.isPlayerDead()) {
+                showRunResult(false);
+                drawWorld();
+                stage.act(delta);
+                stage.draw();
+                return;
+            }
+            if (game.areAllSkillsUnlocked()) {
+                showRunResult(true);
+                drawWorld();
+                stage.act(delta);
+                stage.draw();
+                return;
+            }
             if (gameManager.isWaveCleared) {
                 currentState = ScreenState.FADING_OUT;
                 transitionTimer = 0f;
@@ -157,7 +173,26 @@ public class GameScreen extends BaseScreen {
     }
 
     private boolean isOverlayOpen() {
-        return instructionsOpen || enemyTracker.isDetailsOpen();
+        return resultOpen || instructionsOpen || enemyTracker.isDetailsOpen();
+    }
+
+    private void showRunResult(boolean victory) {
+        if (resultOpen) return;
+        resultOpen = true;
+        if (victory) {
+            Services.AudioManager.playSound(Services.AudioManager.sysLevelUp);
+        } else {
+            Services.AudioManager.playSound(Services.AudioManager.playerDeath);
+        }
+        new RunResultWindow(
+            game.getSkin(),
+            victory,
+            state.getWave(),
+            state.getWaveSeconds(),
+            state.getLevelManager().getDifficulty(),
+            game::restartCurrentRun,
+            game::showMainMenu
+        ).showCentered(stage);
     }
 
     private void updateAimAndInput() {

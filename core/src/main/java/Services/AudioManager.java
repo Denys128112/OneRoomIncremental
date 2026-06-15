@@ -9,6 +9,9 @@ public class AudioManager {
     public static Music battleMusic;
     public static Music bossMusic;
     private static Music currentMusic;
+    private static float musicVolume = 0.45f;
+    private static float soundVolume = 1f;
+    private static boolean enabled = true;
 
     public static Sound uiHover;
     public static Sound uiClick;
@@ -43,7 +46,7 @@ public class AudioManager {
         bossMusic = Gdx.audio.newMusic(Gdx.files.internal("music/music_boss.mp3"));
 
         menuMusic.setLooping(true); battleMusic.setLooping(true); bossMusic.setLooping(true);
-        menuMusic.setVolume(0.4f); battleMusic.setVolume(0.3f); bossMusic.setVolume(0.4f);
+        menuMusic.setVolume(musicVolume); battleMusic.setVolume(musicVolume); bossMusic.setVolume(musicVolume);
 
         uiHover = Gdx.audio.newSound(Gdx.files.internal("sounds/ui_hover.ogg"));
         uiClick = Gdx.audio.newSound(Gdx.files.internal("sounds/ui_click.ogg"));
@@ -77,17 +80,42 @@ public class AudioManager {
         if (currentMusic == musicToPlay) return;
         if (currentMusic != null) currentMusic.stop();
         currentMusic = musicToPlay;
+        currentMusic.setVolume(enabled ? musicVolume : 0f);
         if (currentMusic != null) currentMusic.play();
     }
 
     public static void playSound(Sound sound, float volume) {
-        if (sound != null) {
-            sound.play(volume);
+        if (sound != null && enabled && soundVolume > 0f) {
+            sound.play(volume * soundVolume);
         }
     }
 
     public static void playSound(Sound sound) {
         playSound(sound, 1.0f);
+    }
+
+    public static void setEnabled(boolean enabled) {
+        AudioManager.enabled = enabled;
+        applyMusicVolume();
+    }
+
+    public static void setMusicVolume(float musicVolume) {
+        AudioManager.musicVolume = clamp01(musicVolume);
+        applyMusicVolume();
+    }
+
+    public static void setSoundVolume(float soundVolume) {
+        AudioManager.soundVolume = clamp01(soundVolume);
+    }
+
+    private static void applyMusicVolume() {
+        if (currentMusic != null) currentMusic.setVolume(enabled ? musicVolume : 0f);
+    }
+
+    private static float clamp01(float value) {
+        if (value < 0f) return 0f;
+        if (value > 1f) return 1f;
+        return value;
     }
 
     public static void dispose() {

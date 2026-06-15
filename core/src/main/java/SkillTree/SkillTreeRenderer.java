@@ -13,14 +13,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import skills.PlayerSkillsHolder;
+import stub.GameStateStub;
+import stub.LargeNumberFormatter;
 import ui.UiSkinFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SkillTreeRenderer {
     private final Stage stage;
     private final Skin skin;
+    private final GameStateStub state;
     private Char[] currentClasses;
     private Runnable currentOnBack;
 
@@ -39,8 +43,9 @@ public class SkillTreeRenderer {
     private Label tooltipDesc;
     private Label tooltipStatus;
 
-    public SkillTreeRenderer(Skin skin) {
+    public SkillTreeRenderer(Skin skin, GameStateStub state) {
         this.skin = skin;
+        this.state = state;
         stage = new Stage(new ScreenViewport());
         recalcSizes();
     }
@@ -51,16 +56,37 @@ public class SkillTreeRenderer {
         recalcSizes();
         stage.clear();
 
-        Table root = new Table();
-        root.setFillParent(true);
-        root.setBackground(skin.getDrawable("dark"));
-        root.top().pad(s(20f));
-        stage.addActor(root);
+        Stack screen = new Stack();
+        screen.setFillParent(true);
+        stage.addActor(screen);
 
-        Label title = new Label("ДЕРЕВО НАВИЧОК", skin, "heading");
+        Image background = new Image(skin.getDrawable("main-menu-background"));
+        background.setScaling(com.badlogic.gdx.utils.Scaling.fill);
+        screen.add(background);
+
+        Table dimLayer = new Table();
+        dimLayer.setBackground(skin.getDrawable("dark"));
+        dimLayer.setColor(1f, 1f, 1f, 0.82f);
+        screen.add(dimLayer);
+
+        Table root = new Table();
+        root.top().pad(s(18f));
+        screen.add(root);
+
+        Label title = new Label("ПІКСЕЛЬНЕ ДЕРЕВО ПРОКАЧОК", skin, "title");
         title.setColor(UiSkinFactory.CYAN);
-        title.setFontScale(scale);
-        root.add(title).colspan(classes.length).padBottom(s(14f)).row();
+        title.setAlignment(Align.center);
+        title.setFontScale(0.64f * scale);
+        root.add(title).colspan(classes.length).width(s(1220f)).padBottom(s(4f)).row();
+
+        Label subtitle = new Label("Купуй вузли за кредити. Коли дерево заповнене, герой знаходить заповітний ключ.", skin);
+        subtitle.setAlignment(Align.center);
+        subtitle.setWrap(true);
+        subtitle.setColor(UiSkinFactory.MUTED);
+        subtitle.setFontScale(0.76f * scale);
+        root.add(subtitle).colspan(classes.length).width(s(1120f)).padBottom(s(12f)).row();
+
+        root.add(buildLegend()).colspan(classes.length).padBottom(s(12f)).row();
 
         Table classRow = new Table();
         classRow.top().padLeft(s(8f)).padRight(s(8f));
@@ -76,7 +102,7 @@ public class SkillTreeRenderer {
         scroll.setOverscroll(false, true);
         root.add(scroll).grow().colspan(classes.length).row();
 
-        TextButton back = new TextButton("НАЗАД (ESC)", skin);
+        TextButton back = new TextButton("ПОВЕРНУТИСЯ НА АРЕНУ (ESC)", skin);
         back.getLabel().setFontScale(0.78f * scale);
         back.addListener(new ClickListener() {
             @Override public void clicked(InputEvent e, float x, float y) { onBack.run(); }
@@ -151,10 +177,10 @@ public class SkillTreeRenderer {
             tooltipStatus.setText("Відкрито");
             tooltipStatus.setColor(UiSkinFactory.CYAN);
         } else if (skill.available) {
-            tooltipStatus.setText("Натисни, щоб відкрити");
-            tooltipStatus.setColor(UiSkinFactory.GOLD);
+            tooltipStatus.setText("Ціна: " + LargeNumberFormatter.format(skill.cost));
+            tooltipStatus.setColor(canAfford(skill) ? UiSkinFactory.GOLD : UiSkinFactory.RED);
         } else {
-            tooltipStatus.setText("Заблоковано");
+            tooltipStatus.setText("Спочатку відкрий попередній вузол");
             tooltipStatus.setColor(UiSkinFactory.LOCKED);
         }
 
@@ -191,6 +217,8 @@ public class SkillTreeRenderer {
 
     private Table buildClassColumn(Char c) {
         Table col = new Table();
+        col.setBackground(skin.getDrawable("skill-panel-map"));
+        col.pad(s(8f));
         col.top();
 
         Table header = new Table();
@@ -203,9 +231,15 @@ public class SkillTreeRenderer {
 
         Label name = new Label(c.name, skin, "heading");
         name.setFontScale(0.54f * scale);
-        name.setColor(c.skills.length > 0 ? UiSkinFactory.CYAN : UiSkinFactory.LOCKED);
+        name.setColor(c.skills.length > 0 ? classColor(c.name) : UiSkinFactory.LOCKED);
         name.setAlignment(Align.center);
-        header.add(name).padTop(s(5f));
+        header.add(name).width(cardW + s(26f)).padTop(s(5f)).row();
+
+        Label progress = new Label(unlockedCount(c.skills) + " / " + c.skills.length + " ВУЗЛІВ", skin, "small");
+        progress.setAlignment(Align.center);
+        progress.setColor(UiSkinFactory.MUTED);
+        progress.setFontScale(0.62f * scale);
+        header.add(progress).width(cardW + s(26f)).padTop(s(3f));
         col.add(header).growX().padBottom(s(10f)).row();
 
         List<Skill> roots = new ArrayList<>();
@@ -259,7 +293,7 @@ public class SkillTreeRenderer {
     private Table makeConnector() {
         Table c = new Table();
         Table line = new Table();
-        line.setBackground(skin.getDrawable("border"));
+        line.setBackground(skin.getDrawable("xp-fill-texture"));
         c.add(line).width(s(2f)).height(s(16f)).center();
         return c;
     }
@@ -288,8 +322,8 @@ public class SkillTreeRenderer {
             done.setAlignment(Align.center);
             card.add(done).center().padTop(s(2f));
         } else if (skill.available) {
-            Label hint = new Label("+ відкрити", skin, "small");
-            hint.setColor(UiSkinFactory.GOLD);
+            Label hint = new Label(LargeNumberFormatter.format(skill.cost), skin, "small");
+            hint.setColor(canAfford(skill) ? UiSkinFactory.GOLD : UiSkinFactory.RED);
             hint.setFontScale(0.55f * scale);
             hint.setAlignment(Align.center);
             card.add(hint).center().padTop(s(2f));
@@ -311,16 +345,66 @@ public class SkillTreeRenderer {
             @Override
             public void clicked(InputEvent ev, float x, float y) {
                 if (!skill.unlocked && skill.available) {
+                    if (!state.spendCredits(skill.cost)) {
+                        Services.AudioManager.playSound(Services.AudioManager.uiError);
+                        showTooltip(skill);
+                        return;
+                    }
                     skill.unlocked = true;
                     for (Skill child : owner.skills)
                         if (skill.id.equals(child.requiresId)) child.available = true;
                     if (PlayerSkillsHolder.instance != null) PlayerSkillsHolder.instance.unlock(skill.id);
+                    Services.AudioManager.playSound(Services.AudioManager.uiUpgrade);
                     buildUI(currentClasses, currentOnBack);
+                } else {
+                    Services.AudioManager.playSound(Services.AudioManager.uiError);
                 }
             }
         });
 
         return card;
+    }
+
+    private Table buildLegend() {
+        Table legend = new Table();
+        legend.setBackground(skin.getDrawable("skill-panel-map-blue"));
+        legend.pad(s(10f));
+        Image coin = new Image(skin.getDrawable("pixel-coin-icon"));
+        Label credits = new Label("КРЕДИТИ: " + LargeNumberFormatter.format(state.getCredits()), skin, "heading");
+        credits.setFontScale(0.52f * scale);
+        credits.setColor(UiSkinFactory.GOLD);
+        legend.add(coin).size(s(28f)).padRight(s(8f));
+        legend.add(credits).padRight(s(22f));
+        addLegendItem(legend, UiSkinFactory.CYAN, "КУПЛЕНО");
+        addLegendItem(legend, UiSkinFactory.GOLD, "ДОСТУПНО");
+        addLegendItem(legend, UiSkinFactory.LOCKED, "ЗАБЛОКОВАНО");
+        return legend;
+    }
+
+    private void addLegendItem(Table legend, Color color, String text) {
+        Table marker = new Table();
+        marker.setBackground(skin.getDrawable("border"));
+        marker.setColor(color);
+        Label label = new Label(text, skin, "small");
+        label.setFontScale(0.7f * scale);
+        label.setColor(UiSkinFactory.TEXT);
+        legend.add(marker).width(s(18f)).height(s(18f)).padLeft(s(14f));
+        legend.add(label).padLeft(s(8f)).padRight(s(12f));
+    }
+
+    private int unlockedCount(Skill[] skills) {
+        int unlocked = 0;
+        for (Skill skill : skills) if (skill.unlocked) unlocked++;
+        return unlocked;
+    }
+
+    private Color classColor(String name) {
+        if ("ВОЇН".equals(name)) return Color.valueOf("FFB34D");
+        if ("ФАНТОМ".equals(name)) return Color.valueOf("B18CFF");
+        if ("МАГ".equals(name)) return UiSkinFactory.CYAN;
+        if ("ЛУЧНИК".equals(name)) return Color.valueOf("73F3C0");
+        if ("СТРАЖ".equals(name)) return Color.valueOf("FF8A9D");
+        return UiSkinFactory.CYAN;
     }
 
     private TextureRegionDrawable toDrawable(Texture tex) {
@@ -335,7 +419,11 @@ public class SkillTreeRenderer {
     }
 
     private void refreshCardBg(Table card, Skill skill) {
-        card.setBackground(skin.getDrawable(skill.unlocked ? "border" : skill.available ? "panel-strong" : "panel"));
+        card.setBackground(skin.getDrawable(skill.unlocked ? "border" : skill.available ? "skill-panel-map-blue" : "skill-panel-map"));
+    }
+
+    private boolean canAfford(Skill skill) {
+        BigDecimal cost = skill.cost == null ? BigDecimal.ZERO : skill.cost;
+        return state.getCredits().compareTo(cost) >= 0;
     }
 }
-

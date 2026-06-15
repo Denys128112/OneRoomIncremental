@@ -12,6 +12,7 @@ import java.math.BigDecimal;
  * contains no combat classes, so UI work can be merged while gameplay is in progress.
  */
 public class GameStateStub {
+    public static final int FINAL_WAVE = 15;
     private final Array<UpgradeStub> upgrades = new Array<>();
     private final LevelManager levelManager = new LevelManager();
     private BigDecimal credits = new BigDecimal("1250");
@@ -23,6 +24,8 @@ public class GameStateStub {
     public static int wave = 1;
     private float waveSeconds;
     private boolean soundEnabled = true;
+    private float musicVolume = 0.45f;
+    private float soundVolume = 1f;
     private int prestige;
 
     public GameStateStub() {
@@ -59,6 +62,13 @@ public class GameStateStub {
         return true;
     }
 
+    public boolean spendCredits(BigDecimal cost) {
+        if (cost == null || cost.compareTo(BigDecimal.ZERO) <= 0) return true;
+        if (credits.compareTo(cost) < 0) return false;
+        credits = credits.subtract(cost);
+        return true;
+    }
+
     public static void damageOneQuarter() {
         healthQuarters = Math.max(0, healthQuarters - 1);
     }
@@ -70,6 +80,10 @@ public class GameStateStub {
     public void nextWave() {
         wave++;
         waveSeconds = 0f;
+    }
+
+    public boolean isPlayerDead() {
+        return healthQuarters <= 0;
     }
 
     public void startNewRun(DifficultyLevel difficulty) {
@@ -180,6 +194,36 @@ public class GameStateStub {
 
     public void setSoundEnabled(boolean soundEnabled) {
         this.soundEnabled = soundEnabled;
+    }
+
+    public float getMusicVolume() {
+        return soundEnabled ? musicVolume : 0f;
+    }
+
+    public void setMusicVolume(float musicVolume) {
+        this.musicVolume = clamp01(musicVolume);
+    }
+
+    public float getRawMusicVolume() {
+        return musicVolume;
+    }
+
+    public float getSoundVolume() {
+        return soundEnabled ? soundVolume : 0f;
+    }
+
+    public void setSoundVolume(float soundVolume) {
+        this.soundVolume = clamp01(soundVolume);
+    }
+
+    public float getRawSoundVolume() {
+        return soundVolume;
+    }
+
+    private float clamp01(float value) {
+        if (value < 0f) return 0f;
+        if (value > 1f) return 1f;
+        return value;
     }
 
     public int getPrestige() {

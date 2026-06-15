@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -60,6 +61,12 @@ public final class UiSkinFactory {
         addTextureDrawable(skin, "hybrid-icon", ROOT + "icons/hybrid.png");
         addTextureDrawable(skin, "credits-icon", ROOT + "icons/credits.png");
         addTextureDrawable(skin, "settings-icon", ROOT + "icons/settings.png");
+        addTextureDrawable(skin, "skill-panel-map", ROOT + "gui/interface/TileMap1.png");
+        addTextureDrawable(skin, "skill-panel-map-blue", ROOT + "gui/interface/TileMap5.png");
+        addTextureDrawable(skin, "pixel-button-up", ROOT + "gui/buttons/Button3.png");
+        addTextureDrawable(skin, "pixel-button-down", ROOT + "gui/buttons/Button4.png");
+        addTextureDrawable(skin, "pixel-key-icon", ROOT + "gui/buttons/Icon_01.png");
+        addTextureDrawable(skin, "pixel-coin-icon", ROOT + "gui/buttons/Icon_09.png");
 
         Drawable panel = solid(skin, "panel-texture", Color.valueOf("10192CDD"));
         Drawable panelStrong = solid(skin, "panel-strong-texture", Color.valueOf("192641F2"));
@@ -107,6 +114,12 @@ public final class UiSkinFactory {
         progress.knobBefore = xpFill;
         progress.knob = xpFill;
         skin.add("default-horizontal", progress);
+
+        Slider.SliderStyle slider = new Slider.SliderStyle();
+        slider.background = xpBackground;
+        slider.knobBefore = xpFill;
+        slider.knob = border;
+        skin.add("default-horizontal", slider);
 
         ScrollPane.ScrollPaneStyle scroll = new ScrollPane.ScrollPaneStyle();
         scroll.background = panel;

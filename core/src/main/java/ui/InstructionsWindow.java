@@ -38,8 +38,8 @@ public class InstructionsWindow extends Window {
         addSection(
             content,
             "МЕТА",
-            "Переживай хвилі ворогів, збирай кредити й досвід та посилюй героя. "
-                + "Хвиля завершується після перемоги над усіма ворогами."
+            "Переживай хвилі, збирай кредити й купуй усі вузли дерева навичок. "
+                + "Коли дерево повністю заповнене, герой знаходить заповітний ключ і забіг переходить у фінальну сцену."
         );
         addControls(content);
         addWeapons(content);
@@ -47,7 +47,8 @@ public class InstructionsWindow extends Window {
             content,
             "ХВИЛІ",
             "З кожною хвилею ворогів стає більше та відкриваються нові типи. "
-                + "Кожна п'ята хвиля містить гарантованого мінотавра-боса."
+                + "Кожна п'ята хвиля містить гарантованого мінотавра-боса. "
+                + "Хвилі тривають, доки ти не викупиш усі прокачки."
         );
         addSection(
             content,
@@ -102,12 +103,13 @@ public class InstructionsWindow extends Window {
         controls.setBackground(getSkin().getDrawable("panel-strong"));
         controls.pad(14f);
         addControlRow(controls, "W  A  S  D", "Рух героя");
-        addControlRow(controls, "ПРОБІЛ", "Прискорений біг");
+        addControlRow(controls, "SHIFT", "Прискорений біг після відкриття навички фантома");
         addControlRow(controls, "МИША", "Напрямок атаки");
         addControlRow(controls, "Л.К.М", "Атака або заряджання лука");
         addControlRow(controls, "1  2  3  4", "Вибір активної зброї");
         addControlRow(controls, "F", "Відкрити дерево навичок");
         addControlRow(controls, "H", "Відкрити або закрити інструкцію");
+        addControlRow(controls, "ESC", "Повернутися з дерева навичок на арену");
         content.add(controls).width(790f).left().padBottom(22f).row();
     }
 

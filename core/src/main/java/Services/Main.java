@@ -28,6 +28,9 @@ public class Main extends Game {
         AudioManager.load();
         skin = UiSkinFactory.create();
         gameState = new GameStateStub();
+        AudioManager.setEnabled(gameState.isSoundEnabled());
+        AudioManager.setMusicVolume(gameState.getRawMusicVolume());
+        AudioManager.setSoundVolume(gameState.getRawSoundVolume());
         showMainMenu();
     }
 
@@ -53,6 +56,10 @@ public class Main extends Game {
         showGame();
     }
 
+    public void restartCurrentRun() {
+        startGame(gameState.getLevelManager().getDifficulty());
+    }
+
     public void showUpgrades() {
         switchTo(new UpgradeScreen(this));
     }
@@ -60,6 +67,10 @@ public class Main extends Game {
     public void showSkillTree() {
         if (skillTreeScreen == null) skillTreeScreen = new SkillTreeScreen(this);
         switchTo(skillTreeScreen);
+    }
+
+    public boolean areAllSkillsUnlocked() {
+        return skillTreeScreen != null && skillTreeScreen.areAllSkillsUnlocked();
     }
 
     public Skin getSkin() {

@@ -1,6 +1,7 @@
 package SkillTree;
 
 import com.badlogic.gdx.graphics.Texture;
+import java.math.BigDecimal;
 
 public class Skill {
     public String id, name, description;
@@ -9,6 +10,7 @@ public class Skill {
     public boolean unlocked = false;
     public boolean available;
     public String requiresId;
+    public BigDecimal cost = BigDecimal.ZERO;
 
     public Skill(String id, String name, String description, Texture icon, float x, float y, String requiresId) {
         this.id = id;
@@ -19,6 +21,10 @@ public class Skill {
         this.y = y;
         this.requiresId = requiresId;
         this.available = (requiresId == null);
+    }
+
+    public void setCost(int cost) {
+        this.cost = BigDecimal.valueOf(Math.max(0, cost));
     }
 
     public void dispose() {

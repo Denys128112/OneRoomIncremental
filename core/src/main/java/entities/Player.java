@@ -141,10 +141,6 @@ public class Player extends Entity {
             skills.mage.setElement(elements[next]);
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F) && skills.phantom.tryEcho()) {
-            GameManager.projectiles.removeIf(p -> p.isEnemyProjectile);
-        }
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.T) && skills.phantom.tryTeleport()) {
             x = screens.GameScreen.mouseWorldX - width / 2f;
             y = screens.GameScreen.mouseWorldY - height / 2f;
