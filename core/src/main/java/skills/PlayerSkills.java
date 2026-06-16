@@ -24,7 +24,7 @@ public class PlayerSkills {
 
     private static final String[] RANGER_IDS = {
         "bow_basic", "bow_iron", "bow_enchanted", "bow_explosive",
-        "piercing", "cryo_arrows", "ricochet", "bullet_destroy", "crossfire",
+        "piercing", "cryo_arrows", "ricochet", "bullet_destroy", "crossfire", "crossfire2",
         "pistol1", "pistol2", "pistol3", "pistol4", "turret"
     };
 
