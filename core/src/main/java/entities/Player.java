@@ -173,26 +173,21 @@ public class Player extends Entity {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
                     if (skills.mage.getWallMode() != MageSkills.WallMode.NONE) skills.mage.rotateWall();
                     else if (el == MageSkills.Element.FIRE) skills.mage.tryInfernalExplosion(x + width / 2f, y + height / 2f);
-                    else if (el == MageSkills.Element.ICE) {
-                        if (skills.mage.isIceStormReady()) {
-                            skills.mage.tryIceStorm(x + width / 2f, y + height / 2f);
-                        } else {
-                            skills.mage.tryFrostyBreath(
-                                x + width / 2f, y + height / 2f, screens.GameScreen.mouseWorldX, screens.GameScreen.mouseWorldY);
-                        }
-                    } else if (el == MageSkills.Element.WATER) skills.mage.tryWave(x + width / 2f, y + height / 2f, screens.GameScreen.mouseWorldX, screens.GameScreen.mouseWorldY);
+                    else if (el == MageSkills.Element.ICE) {skills.mage.tryFrostyBreath(x + width / 2f, y + height / 2f, screens.GameScreen.mouseWorldX, screens.GameScreen.mouseWorldY);}
+                    else if (el == MageSkills.Element.WATER) skills.mage.tryWave(x + width / 2f, y + height / 2f, screens.GameScreen.mouseWorldX, screens.GameScreen.mouseWorldY);
                     else if (el == MageSkills.Element.EARTH) skills.mage.tryEarthquake(x + width / 2f, y + height / 2f);
                 }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-                    if (skills.mage.getWallMode() != MageSkills.WallMode.NONE) {
+                    if (skills.mage.getWallMode() != MageSkills.WallMode.NONE)
                         skills.mage.cancelStoneWall();
-                    } else if (el == MageSkills.Element.WATER) {
+                    else if (el == MageSkills.Element.ICE)
+                        skills.mage.tryIceStorm(x + width / 2f, y + height / 2f);
+                    else if (el == MageSkills.Element.WATER) {
                         skills.mage.tryWhirlpool(
                             screens.GameScreen.mouseWorldX,
                             screens.GameScreen.mouseWorldY);
-                    } else if (el == MageSkills.Element.WATER) {
+                    } else if (el == MageSkills.Element.WATER)
                         skills.mage.tryTsunami(x + width / 2f, y + height / 2f);
-                    }
                 }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.Z)
                     && el == MageSkills.Element.WATER) {
@@ -300,6 +295,7 @@ public class Player extends Entity {
         isDashing = true;
         dashTimer = DASH_DURATION;
         dashCooldown = getDashCooldown();
+        skills.phantom.onDashUsed();
     }
 
     private void updateDash(float deltaTime) {

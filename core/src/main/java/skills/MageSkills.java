@@ -405,17 +405,24 @@ public class MageSkills {
     public void cancelStoneWall() { wallMode = WallMode.NONE; }
     public WallMode getWallMode() { return wallMode; }
 
-    public boolean isFireballUnlocked()   { return fireballUnlocked; }
-    public boolean isInfernalReady()      { return infernalExplosionUnlocked && infernalCooldown <= 0f; }
-    public float   getInfernalCooldown()  { return infernalCooldown; }
-    public boolean isFrostyBreathReady()  { return frostyBreathUnlocked && frostyCooldown <= 0f; }
-    public boolean isIceStormReady()      { return iceStormUnlocked && iceStormCooldown <= 0f; }
-    public boolean isWaveReady()          { return waveUnlocked && waveCooldown <= 0f; }
-    public boolean isWhirlpoolReady()     { return whirlpoolUnlocked && whirlpoolCooldown <= 0f; }
-    public boolean isTsunamiReady()       { return tsunamiUnlocked && tsunamiCooldown <= 0f; }
-    public boolean isEarthquakeReady()    { return earthquakeUnlocked && earthquakeCooldown <= 0f; }
-    public boolean isStoneWallReady()     { return stoneWallUnlocked && stoneWallCooldown <= 0f; }
-    public float   getStoneDamageReduction() { return 1f; }
+    public boolean isFireballUnlocked() { return fireballUnlocked; }
+    public boolean isInfernalReady() { return infernalExplosionUnlocked && infernalCooldown <= 0f; }
+    public float getInfernalCooldown() { return infernalCooldown; }
+    public boolean isFrostyBreathReady() { return frostyBreathUnlocked && frostyCooldown <= 0f; }
+    public boolean isIceStormReady() { return iceStormUnlocked && iceStormCooldown <= 0f; }
+    public boolean isWaveReady(){ return waveUnlocked && waveCooldown <= 0f; }
+    public boolean isWhirlpoolReady()  { return whirlpoolUnlocked && whirlpoolCooldown <= 0f; }
+    public boolean isTsunamiReady(){ return tsunamiUnlocked && tsunamiCooldown <= 0f; }
+    public boolean isEarthquakeReady(){ return earthquakeUnlocked && earthquakeCooldown <= 0f; }
+    public boolean isStoneWallReady() { return stoneWallUnlocked && stoneWallCooldown <= 0f; }
+    public boolean isFrostyBreathUnlocked(){ return frostyBreathUnlocked; }
+    public boolean isIceStormUnlocked() { return iceStormUnlocked; }
+    public boolean isWaveUnlocked() { return waveUnlocked; }
+    public boolean isWhirlpoolUnlocked() { return whirlpoolUnlocked; }
+    public boolean isTsunamiUnlocked(){ return tsunamiUnlocked; }
+    public boolean isEarthquakeUnlocked() { return earthquakeUnlocked; }
+    public boolean isStoneWallUnlocked() { return stoneWallUnlocked; }
+    public float getStoneDamageReduction() { return 1f; }
 
     private Enemy findNearest(float maxDist) {
         entities.Player player = skills.PlayerSkillsHolder.player;

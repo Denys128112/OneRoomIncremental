@@ -45,8 +45,10 @@ public class GameManager {
         this.player = new Player(400, 300);
         skills.PlayerSkills playerSkills = new skills.PlayerSkills(state);
         player.setSkills(playerSkills);
+        playerSkills.ranger.loadTextures();
         PlayerSkillsHolder.player = player;
         PlayerSkillsHolder.instance = playerSkills;
+        reapplyUnlockedSkills(playerSkills);
         this.projectiles = new ArrayList<>();
         this.deadEnemies = new ArrayList<>();
         this.enemyGenerator = new EnemyGenerator(state.getLevelManager());
@@ -107,39 +109,38 @@ public class GameManager {
         }
     }
 
-    private void handleCollisions(float delta) {
+   private void handleCollisions(float delta) {
+        List<Projectile> toRemove = new ArrayList<>();
+        for (Projectile p : projectiles) p.update(delta);
+
         Iterator<Projectile> iter = projectiles.iterator();
         while (iter.hasNext()) {
             Projectile p = iter.next();
-            p.update(delta);
 
             if (CollisionChecker.isCollisionWithWall(p)) {
                 boolean ricochetUnlocked = player.skills != null && player.skills.ranger.isRicochetUnlocked();
-
                 if (ricochetUnlocked && !p.isEnemyProjectile && p.ricochetCount < Projectile.MAX_RICOCHET) {
                     CollisionChecker.WallHitSide side = CollisionChecker.getWallHitSide(p);
-
                     if (side == CollisionChecker.WallHitSide.VERTICAL) p.reflectX();
                     else p.reflectY();
-
                     p.setX(p.getX() + p.getDx() * 2f);
                     p.setY(p.getY() + p.getDy() * 2f);
                     p.bounds.setPosition(p.getX() - p.bounds.width / 2f, p.getY() - p.bounds.height / 2f);
-
                     p.ricochetCount++;
                     p.hitEnemies.clear();
-                } else iter.remove();
+                } else {
+                    iter.remove();
+                }
                 continue;
             }
 
             if (p.isEnemyProjectile) {
                 boolean destroyed = false;
                 if (player.skills != null && player.skills.ranger.isBulletDestroyUnlocked()) {
-                    Iterator<Projectile> inner = projectiles.iterator();
-                    while (inner.hasNext()) {
-                        Projectile other = inner.next();
+                    List<Projectile> snapshot = new ArrayList<>(projectiles);
+                    for (Projectile other : snapshot) {
                         if (!other.isEnemyProjectile && other.bounds.overlaps(p.bounds)) {
-                            inner.remove();
+                            toRemove.add(other);
                             destroyed = true;
                             break;
                         }
@@ -166,9 +167,20 @@ public class GameManager {
 
                     if (player.inventory[1] instanceof Bow && player.selectedSlot == 1 && player.skills != null) {
                         player.skills.ranger.onArrowHit(e, p.getX(), p.getY());
+                        if (player.skills.ranger.isBowExplosiveUnlocked()) {
+                            com.badlogic.gdx.graphics.Texture boom = player.skills.ranger.getBoomTexture();
+                            if (boom != null) {
+                                player.skills.mage.effects.add(new skills.MageSkills.VisualEffect(
+                                    p.getX(), p.getY(), 80f, 0.4f, 0.4f, false,
+                                    new com.badlogic.gdx.graphics.g2d.TextureRegion[]{
+                                        new com.badlogic.gdx.graphics.g2d.TextureRegion(boom)
+                                    }
+                                ));
+                            }
+                        }
                     }
 
-                    if (player.inventory[2] instanceof Staff) {
+                    if (player.inventory[2] instanceof Staff && player.selectedSlot == 2) {
                         Staff staff = (Staff) player.inventory[2];
                         staff.onProjectileHit(e, p.getX(), p.getY());
                     }
@@ -194,6 +206,7 @@ public class GameManager {
                 if (bulletDestroyed) continue;
             }
         }
+        projectiles.removeAll(toRemove);
     }
 
     public void drawEntities(ShapeRenderer shapeRenderer) {
@@ -398,6 +411,14 @@ public class GameManager {
                 state.healOneQuarter();
                 heartIter.remove();
             }
+        }
+    }
+
+    private void reapplyUnlockedSkills(skills.PlayerSkills playerSkills) {
+        SkillTree.SkillTreeScreen skillTree = skills.PlayerSkillsHolder.skillTreeScreen;
+        if (skillTree == null) return;
+        for (String id : skillTree.getUnlockedSkillIds()) {
+            playerSkills.unlock(id);
         }
     }
 

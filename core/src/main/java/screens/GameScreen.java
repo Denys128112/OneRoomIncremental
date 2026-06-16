@@ -14,10 +14,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import stub.GameStateStub;
-import ui.GameHUD;
-import ui.EnemyTrackerPanel;
-import ui.InstructionsWindow;
-import ui.RunResultWindow;
+import ui.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -51,6 +48,8 @@ public class GameScreen extends BaseScreen {
     private boolean instructionsOpen;
     private boolean resultOpen;
 
+    private SkillHotbarPanel skillHotbar;
+
     public static float mouseWorldX, mouseWorldY;
 
     public GameScreen(Main game) {
@@ -72,6 +71,7 @@ public class GameScreen extends BaseScreen {
         stage.addActor(hud);
         enemyTracker = new EnemyTrackerPanel(game.getSkin(), GameManager.enemies);
         stage.addActor(enemyTracker);
+        skillHotbar = new SkillHotbarPanel(game.getSkin(), stage);
         addInstructionsButton();
 
         checkMusic();
@@ -87,9 +87,12 @@ public class GameScreen extends BaseScreen {
             state.update(delta);
         }
         updateHud(delta);
-        if (!isOverlayOpen()) {
-            updateAimAndInput();
-        }
+
+        skills.MageSkills.Element el = skills.MageSkills.Element.FIRE;
+        if (gameManager.player.skills != null) el = gameManager.player.skills.mage.getElement();
+        skillHotbar.refresh(gameManager.player.selectedSlot, el);
+
+        if (!isOverlayOpen()) updateAimAndInput();
 
         if (!isOverlayOpen() && currentState == ScreenState.PLAYING) {
             gameManager.update(delta);
@@ -332,6 +335,7 @@ public class GameScreen extends BaseScreen {
         renderer.dispose();
         shapeRenderer.dispose();
         spriteBatch.dispose();
+        skillHotbar.dispose();
         super.dispose();
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import SkillTree.SkillTreeScreen;
+import java.math.BigDecimal;
 
 /**
  * Screen-oriented application root.
@@ -57,7 +58,15 @@ public class Main extends Game {
     }
 
     public void restartCurrentRun() {
-        startGame(gameState.getLevelManager().getDifficulty());
+        if (skillTreeScreen != null) {
+            BigDecimal spent = skillTreeScreen.getTotalSpent();
+            gameState.startNewRun(gameState.getLevelManager().getDifficulty());
+            gameState.addCredits(spent);
+        } else {
+            gameState.startNewRun(gameState.getLevelManager().getDifficulty());
+        }
+        gameScreen = null;
+        showGame();
     }
 
     public void showUpgrades() {
@@ -66,6 +75,7 @@ public class Main extends Game {
 
     public void showSkillTree() {
         if (skillTreeScreen == null) skillTreeScreen = new SkillTreeScreen(this);
+        skills.PlayerSkillsHolder.skillTreeScreen = skillTreeScreen;
         switchTo(skillTreeScreen);
     }
 

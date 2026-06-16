@@ -41,6 +41,9 @@ public class PhantomSkills {
     private float echoCooldown;
     private static final float ECHO_COOLDOWN = 30f;
 
+    private float dashCooldown = 0f;
+    private static final float DASH_COOLDOWN = 15f;
+
     public PhantomSkills(GameStateStub state) {
         this.state = state;
     }
@@ -53,6 +56,7 @@ public class PhantomSkills {
         }
         if (echoCooldown > 0f) echoCooldown -= delta;
         if (teleportCooldown > 0f) teleportCooldown -= delta;
+        if (dashCooldown > 0f) dashCooldown -= delta;
     }
 
     public void onDodge() {
@@ -103,12 +107,20 @@ public class PhantomSkills {
         return true;
     }
 
+    public void onDashUsed() {float cooldown = dashDamageUnlocked ? 10f : 15f;dashCooldown = cooldown;}
     public boolean isDashUnlocked() { return dashUnlocked; }
     public boolean isInvulDashUnlocked() { return invulDashUnlocked; }
     public boolean isDashDamageUnlocked() { return dashDamageUnlocked; }
     public boolean isTeleportReady() { return teleportUnlocked && teleportCooldown <= 0f; }
     public boolean isEchoReady() { return echoUnlocked && echoCooldown <= 0f; }
-    public float   getTeleportCooldown() { return teleportCooldown; }
+    public float getTeleportCooldown() { return teleportCooldown; }
+    public boolean isSprintUnlocked() { return sprintUnlocked; }
+    public boolean isSprintReady() { return sprintUnlocked && sprintCooldown <= 0f; }
+    public float getSprintCooldown() { return sprintCooldown; }
+    public boolean isEchoUnlocked() { return echoUnlocked; }
+    public float getEchoCooldown() { return echoCooldown; }
+    public boolean isDashReady() { return dashUnlocked && dashCooldown <= 0f; }
+    public float getDashCooldown() { return dashCooldown; }
 
     public void unlock(String id) {
         switch (id) {

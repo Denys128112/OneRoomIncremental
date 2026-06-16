@@ -107,6 +107,7 @@ public class InstructionsWindow extends Window {
         addControlRow(controls, "МИША", "Напрямок атаки");
         addControlRow(controls, "Л.К.М", "Атака або заряджання лука");
         addControlRow(controls, "1  2  3  4", "Вибір активної зброї");
+        addControlRow(controls, "TAB", "Зміна стихії посоха (Вогонь → Лід → Вода → Земля)");
         addControlRow(controls, "F", "Відкрити дерево навичок");
         addControlRow(controls, "H", "Відкрити або закрити інструкцію");
         addControlRow(controls, "ESC", "Повернутися з дерева навичок на арену");
@@ -127,7 +128,7 @@ public class InstructionsWindow extends Window {
             "Затисни ЛКМ для заряджання, відпусти для пострілу"
         );
         addWeaponRow(weapons, "3", "ПОСОХ", "Швидкі магічні снаряди");
-        addWeaponRow(weapons, "4", "СПИС", "Пробиває одразу кількох ворогів");
+        addWeaponRow(weapons, "4", "ПІСТОЛЕТ", "Швидка стрільба з коротким перезарядженням");
         content.add(weapons).width(790f).left().padBottom(22f).row();
     }
 

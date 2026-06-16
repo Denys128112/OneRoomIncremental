@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import Services.Main;
 import com.badlogic.gdx.Screen;
+
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +40,30 @@ public class SkillTreeScreen implements Screen {
             return;
         }
         renderer.render(classes, null);
+    }
+
+    public BigDecimal getTotalSpent() {
+        if (classes == null) return BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
+        for (Char c : classes) {
+            for (Skill skill : c.skills) {
+                if (skill.unlocked && skill.cost != null) {
+                    total = total.add(skill.cost);
+                }
+            }
+        }
+        return total;
+    }
+
+    public java.util.List<String> getUnlockedSkillIds() {
+        java.util.List<String> ids = new java.util.ArrayList<>();
+        if (classes == null) return ids;
+        for (Char c : classes) {
+            for (Skill skill : c.skills) {
+                if (skill.unlocked) ids.add(skill.id);
+            }
+        }
+        return ids;
     }
 
     private Char[] buildClasses(Char[] previous) {

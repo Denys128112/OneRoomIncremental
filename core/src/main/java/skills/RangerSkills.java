@@ -33,6 +33,12 @@ public class RangerSkills {
     private static final int EXPLOSION_DAMAGE = 15;
     private static final float EXPLOSION_RADIUS = 60f;
 
+    private com.badlogic.gdx.graphics.Texture boomTexture;
+    public void loadTextures() {
+        if (boomTexture == null) boomTexture = new com.badlogic.gdx.graphics.Texture("enemies/Boom.png");
+    }
+    public com.badlogic.gdx.graphics.Texture getBoomTexture() { return boomTexture; }
+
     public RangerSkills(GameStateStub state) {
         this.state = state;
     }
